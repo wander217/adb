@@ -61,7 +61,7 @@ train:
           rotate: [ -10, 10 ]
           fit_output: True
         Resize:
-          size: [ 0.5, 3. ]
+          size: [ 0.5, 1.5 ]
       DetCrop:
         minCropSize: 0.1
         maxTries: 10
