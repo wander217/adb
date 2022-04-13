@@ -43,7 +43,7 @@ accurancy:
   accThresh: 0.5
 
 train:
-  batchSize: 4
+  batchSize: 2
   numWorkers: 1
   dropLast: True
   shuffle: True
@@ -61,7 +61,7 @@ train:
           rotate: [ -10, 10 ]
           fit_output: True
         Resize:
-          size: [ 0.5, 3. ]
+          size: [ 0.5, 2. ]
       DetCrop:
         generalSize: [800, 800]
         minCropSize: 0.1
