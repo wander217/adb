@@ -48,8 +48,8 @@ class DetCrop:
         for target in orgAnno:
             polygon = np.array(target['polygon'])
             if not self._isOutside(polygon, [cropX, cropY, cropX + cropW, cropY + cropH]):
-                # newPolygon: List = ((polygon - (cropX, cropY)) * scale).tolist()
-                newPolygon: List = (polygon - (cropX, cropY)).tolist()
+                newPolygon: List = ((polygon - (cropX, cropY)) * scale).tolist()
+                # newPolygon: List = (polygon - (cropX, cropY)).tolist()
                 tars.append({**target, 'polygon': newPolygon})
         data['anno'] = tars
         data['img'] = padImage
