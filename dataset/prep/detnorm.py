@@ -41,7 +41,7 @@ class DetNorm:
             data['threshMap'] = cv2.resize(data['threshMap'],
                                            (new_w, new_h),
                                            interpolation=cv2.INTER_CUBIC)
-            data['probMap'] = cv2.resize(data['probMap'],
+            data['probMap'][0] = cv2.resize(data['probMap'][0],
                                          (new_w, new_h),
                                          interpolation=cv2.INTER_CUBIC)
             data['threshMask'] = cv2.resize(data['threshMask'],
