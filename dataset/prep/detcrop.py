@@ -35,7 +35,7 @@ class DetCrop:
         h = math.ceil(cropH / 32) * 32
         w = math.ceil(cropW / 32) * 32
         padImage: np.ndarray = np.zeros((h, w, 3), img.dtype)
-        padImage[:cropH, :cropW, :] = img
+        padImage[:cropH, :cropW, :] = img[cropY:cropY + cropH, cropX:cropX + cropW]
         # scaleW: float = self._generalSize[0] / cropW
         # scaleH: float = self._generalSize[1] / cropH
         # scale: float = min(scaleH, scaleW)
