@@ -37,8 +37,9 @@ class DBHead(nn.Module):
         result: OrderedDict = OrderedDict()
         # calculate probability map
         probMap: Tensor = self.prob(x)
-        result.update(probMap=probMap)
         threshMap: Tensor = self.thresh(x)
         binaryMap: Tensor = self.binarize(probMap, threshMap)
-        result.update(binaryMap=binaryMap, threshMap=threshMap)
+        result.update(probMap=probMap,
+                      binaryMap=binaryMap,
+                      threshMap=threshMap)
         return result
