@@ -23,18 +23,19 @@ class DBPredictor:
         state_dict = torch.load(pretrained, map_location=self.device)
         self._model.load_state_dict(state_dict['model'])
         # multi scale problem => training
-        config['score']['resize'] = True
         self._score: DetScore = DetScore(**config['score'])
         self._limit: int = 960
 
     def _resize(self, image: np.ndarray) -> Tuple:
         org_h, org_w, _ = image.shape
-        scale = self._limit / org_h
+        # scale = self._limit / org_h
+        # new_h = math.ceil(org_h / 32) * 32
+        # scale = 0.705 if org_h > self._limit else scale
+        # # new_w = math.ceil(org_w / org_h * new_h)
+        # new_h = math.ceil(scale * org_h)
+        # new_w = math.ceil(scale * org_w)
         new_h = math.ceil(org_h / 32) * 32
-        scale = 0.705 if org_h > self._limit else scale
-        # new_w = math.ceil(org_w / org_h * new_h)
-        new_h = math.ceil(scale * org_h)
-        new_w = math.ceil(scale * org_w)
+        new_w = math.ceil(org_w / 32) * 32
         new_image = np.zeros((math.ceil(new_h / 32) * 32,
                               math.ceil(new_w / 32) * 32, 3), dtype=np.uint8)
         image = cv.resize(image, (new_w, new_h), interpolation=cv.INTER_LINEAR)
@@ -57,10 +58,8 @@ class DBPredictor:
             h, w, _ = image.shape
             reImage, newH, newW = self._resize(image)
             inputImage = self._normalize(reImage)
-            pred: OrderedDict = self._model(dict(img=inputImage), training=False)
-            bs, ss = self._score(pred, dict(img=inputImage,
-                                            orgShape=torch.Tensor([[h, w]]),
-                                            newShape=torch.Tensor([[newH, newW]])))
+            pred: OrderedDict = self._model(dict(img=inputImage, shape=[newH, newW]))
+            bs, ss = self._score(pred, dict(img=inputImage))
             for i in range(len(bs[0])):
                 if ss[0][i] > 0:
                     bboxes.append(bs[0][i])
@@ -69,41 +68,41 @@ class DBPredictor:
 
 
 if __name__ == "__main__":
-    configPath: str = r'config/dbpp_se_eb0.yaml'
-    pretrainedPath: str = r'pretrained/se_eb0/checkpoint_706.pth'
+    configPath: str = r'D:\workspace\project\adb\config\adb_se_eb0.yaml'
+    pretrainedPath: str = r'pretrained/checkpoint_130.pth'
     # configPath: str = r'config/dbpp_eb0.yaml'
     # pretrainedPath: str = r'pretrained/eb0/checkpoint_941.pth'
     # imgPath: str = r'C:\Users\thinhtq\Downloads\vietnamese_original\vietnamese\unseen_test_images\im1999.jpg'
-    # imgPath: str = r'test_image/test10_1.jpeg'
+    imgPath: str = r'D:\workspace\project\db_pp\test_image\test1_1.png'
     predictor = DBPredictor(configPath, pretrainedPath)
-    # img = cv.imread(imgPath)
-    # start = time.time()
-    # boxes, scores = predictor(img)
-    # print(len(boxes))
-    # for box in boxes:
-    #     img = cv.polylines(img, [box], True, (0, 0, 255), 2)
-    # cv.imwrite("abc.jpg", img)
-    # cv.imshow("abc", img)
-    # cv.waitKey(0)
+    img = cv.imread(imgPath)
+    start = time.time()
+    boxes, scores = predictor(img)
+    print(len(boxes))
+    for box in boxes:
+        img = cv.polylines(img, [box], True, (0, 0, 255), 2)
+    cv.imwrite("abc.jpg", img)
+    cv.imshow("abc", img)
+    cv.waitKey(0)
     # cv.imshow("result", img)
     # cv.waitKey(0)
     # cv.imwrite("result/test.jpg", img)
     # end = time.time() - start
     # print("Process time:", end)
-    root: str = r'C:\Users\thinhtq\Downloads\pdftoimage (1)'
-    count = 0
-    for subRoot, dirs, files in os.walk(root):
-        for file in files:
-            if file.endswith(".jpg"):
-                print(file)
-                img = cv.imread(os.path.join(subRoot, file))
-                if img is None:
-                    count+=1
-                    continue
-                # kernel = np.ones((3, 3), dtype=np.uint8)
-                # img = cv.erode(img, kernel, iterations=1)
-                boxes, scores = predictor(img)
-                for box in boxes:
-                    img = cv.polylines(img, [box], True, (0, 0, 255), 2)
-                cv.imwrite("result5/test{}.jpg".format(count), img)
-                count += 1
+    # root: str = r'C:\Users\thinhtq\Downloads\pdftoimage (1)'
+    # count = 0
+    # for subRoot, dirs, files in os.walk(root):
+    #     for file in files:
+    #         if file.endswith(".jpg"):
+    #             print(file)
+    #             img = cv.imread(os.path.join(subRoot, file))
+    #             if img is None:
+    #                 count+=1
+    #                 continue
+    #             # kernel = np.ones((3, 3), dtype=np.uint8)
+    #             # img = cv.erode(img, kernel, iterations=1)
+    #             boxes, scores = predictor(img)
+    #             for box in boxes:
+    #                 img = cv.polylines(img, [box], True, (0, 0, 255), 2)
+    #             cv.imwrite("result5/test{}.jpg".format(count), img)
+    #             count += 1
