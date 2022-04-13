@@ -91,7 +91,7 @@ def padding(img: np.ndarray, shape: Tuple):
 
 class DetCollate:
     def __init__(self):
-        self._limit: int = 1920
+        self._limit: int = 1280
 
     def __call__(self, batch: Tuple) -> OrderedDict:
         imgs: List = []
