@@ -24,6 +24,7 @@ class ThreshMaker:
         cv.imshow("thresh mask", threshMask)
         cv.imshow("thresh map", threshMap)
 
+
     def _build(self, data: OrderedDict) -> OrderedDict:
         img: np.ndarray = data['img']
         polygons: List = data['polygon']

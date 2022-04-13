@@ -1,3 +1,5 @@
+from typing import OrderedDict
+
 from dataset import DetLoader
 from dataset.loader import DetDataset
 import yaml
@@ -11,13 +13,13 @@ if __name__ == "__main__":
     valid = DetDataset(**config['train']['dataset'])
     print(valid.__len__())
 
-    # for i in range(0, valid.__len__()):
-    #     data: OrderedDict = valid.__getitem__(i, isVisual=True)
-    #     print(i)
-
-    train = DetLoader(**config['train']).build()
-    for i, data in enumerate(train):
-        # print(data.keys())
-        # break
+    for i in range(0, valid.__len__()):
+        data: OrderedDict = valid.__getitem__(i, isVisual=True)
         print(i)
+    #
+    # train = DetLoader(**config['train']).build()
+    # for i, data in enumerate(train):
+    #     # print(data.keys())
+    #     # break
+    #     print(i)
 
