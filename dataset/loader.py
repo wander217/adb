@@ -1,3 +1,5 @@
+import math
+
 import torch
 from torch.utils.data import DataLoader, Dataset
 from typing import Dict, List, Tuple
@@ -66,18 +68,30 @@ class DetDataset(Dataset):
 def padding(img: np.ndarray, shape: Tuple):
     if len(img.shape) == 3:
         c, h, w = img.shape
+        new_h, new_w = h, w
+        if h > shape[0] or w > shape[1]:
+            scale = max([shape[0] / h, shape[1] / w])
+            new_h = math.floor(scale * h)
+            new_w = math.floor(scale * w)
+            img = cv.resize(img, (new_w, new_h), interpolation=cv.INTER_CUBIC)
         new_image = np.zeros((c, shape[0], shape[1]), dtype=np.uint8)
-        new_image[:, :h, :w] = img
+        new_image[:, :new_h, :new_w] = img
     else:
         h, w = img.shape
         new_image = np.zeros((shape[0], shape[1]), dtype=np.uint8)
-        new_image[:h, :w] = img
+        new_h, new_w = h, w
+        if h > shape[0] or w > shape[1]:
+            scale = max([shape[0] / h, shape[1] / w])
+            new_h = math.floor(scale * h)
+            new_w = math.floor(scale * w)
+            img = cv.resize(img, (new_w, new_h), interpolation=cv.INTER_CUBIC)
+        new_image[:new_h, :new_w] = img
     return new_image
 
 
 class DetCollate:
     def __init__(self):
-        pass
+        self._limit: int = 1920
 
     def __call__(self, batch: Tuple) -> OrderedDict:
         imgs: List = []
@@ -93,6 +107,8 @@ class DetCollate:
             c, h, w = element['img'].shape
             mh = max([mh, h])
             mw = max([mw, w])
+        mh = min([mh, self._limit])
+        mw = min([mw, self._limit])
         for element in batch:
             imgs.append(padding(element['img'], (mh, mw)))
             probMaps.append(padding(element['probMap'], (mh, mw)))
