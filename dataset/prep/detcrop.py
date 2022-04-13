@@ -5,9 +5,10 @@ from typing import List, Dict
 
 
 class DetCrop:
-    def __init__(self, maxTries: int, minCropSize: float):
+    def __init__(self, generalSize: List, maxTries: int, minCropSize: float):
         self._maxTries: int = maxTries
         self._minCropSize: float = minCropSize
+        self._generalSize: List = generalSize
 
     def __call__(self, data: Dict, isVisual: bool = False) -> Dict:
         output: Dict = self._build(data)
@@ -31,17 +32,22 @@ class DetCrop:
         orgAnno: List = data['anno']
         polygon_list: List = [tar['polygon'] for tar in orgAnno if not tar['ignore']]
         cropX, cropY, cropW, cropH = self._cropArea(img, polygon_list)
-        h = math.ceil(cropH / 32) * 32
-        w = math.ceil(cropW / 32) * 32
+        scaleW: float = self._generalSize[0] / cropW
+        scaleH: float = self._generalSize[1] / cropH
+        scale: float = min(scaleH, scaleW)
+        h = int(scale * cropH) if scale < 1 else cropH
+        w = int(scale * cropW) if scale < 1 else cropW
 
-        padImage: np.ndarray = np.zeros((h, w, img.shape[2]), img.dtype)
-        padImage[:cropH, :cropW] = img[cropY:cropY + cropH, cropX:cropX + cropW]
+        padImage: np.ndarray = np.zeros((self._generalSize[1],
+                                         self._generalSize[0],
+                                         img.shape[2]), img.dtype)
+        padImage[:h, :w] = cv.resize(img[cropY:cropY + cropH, cropX:cropX + cropW], (w, h))
 
         tars: List = []
         for target in orgAnno:
             polygon = np.array(target['polygon'])
             if not self._isOutside(polygon, [cropX, cropY, cropX + cropW, cropY + cropH]):
-                newPolygon: List = (polygon - (cropX, cropY)).tolist()
+                newPolygon: List = ((polygon - (cropX, cropY)) * scale).tolist()
                 tars.append({**target, 'polygon': newPolygon})
         data['anno'] = tars
         data['img'] = padImage

@@ -63,6 +63,7 @@ train:
         Resize:
           size: [ 0.5, 3. ]
       DetCrop:
+        generalSize: [960, 960]
         minCropSize: 0.1
         maxTries: 10
       DetForm:
@@ -76,7 +77,6 @@ train:
         maxThresh: 0.7
       DetNorm:
         mean: [ 122.67891434, 116.66876762, 104.00698793 ]
-        limit: 736
       DetFilter:
         key: [ 'polygon', 'ignore', 'train' ]
 
@@ -104,7 +104,6 @@ valid:
         maxThresh: 0.7
       DetNorm:
         mean: [ 122.67891434, 116.66876762, 104.00698793 ]
-        limit: 10000
       DetFilter:
         key: [ 'polygon', 'ignore', 'train' ]
 
