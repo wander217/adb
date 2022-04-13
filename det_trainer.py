@@ -141,7 +141,7 @@ if __name__ == "__main__":
     if args.root.strip():
         root = args.root.strip()
         for item in ["train", 'valid']:
-            config[item]['dataset']['imgDir'] = os.path.join(root, "{}/img".format(item))
+            config[item]['dataset']['imgDir'] = os.path.join(root, "{}/image".format(item))
             config[item]['dataset']['tarFile'] = os.path.join(root, "{}/target.json".format(item))
             config[item]['dataset']['imgType'] = args.imgType
     if args.resume.strip():
