@@ -32,23 +32,28 @@ class DetCrop:
         orgAnno: List = data['anno']
         polygon_list: List = [tar['polygon'] for tar in orgAnno if not tar['ignore']]
         cropX, cropY, cropW, cropH = self._cropArea(img, polygon_list)
-        scaleW: float = self._generalSize[0] / cropW
-        scaleH: float = self._generalSize[1] / cropH
-        scale: float = min(scaleH, scaleW)
-        scale = min([scale, 1])
-        h = int(scale * cropH)
-        w = int(scale * cropW)
-
-        padImage: np.ndarray = np.zeros((self._generalSize[1],
-                                         self._generalSize[0],
-                                         img.shape[2]), img.dtype)
-        padImage[:h, :w] = cv.resize(img[cropY:cropY + cropH, cropX:cropX + cropW], (w, h))
+        h = math.ceil(cropH / 32) * 32
+        w = math.ceil(cropW / 32) * 32
+        padImage: np.ndarray = np.zeros((h, w, 3), img.dtype)
+        padImage[:cropH, :cropW, :] = img
+        # scaleW: float = self._generalSize[0] / cropW
+        # scaleH: float = self._generalSize[1] / cropH
+        # scale: float = min(scaleH, scaleW)
+        # scale = min([scale, 1])
+        # h = int(scale * cropH)
+        # w = int(scale * cropW)
+        #
+        # padImage: np.ndarray = np.zeros((self._generalSize[1],
+        #                                  self._generalSize[0],
+        #                                  img.shape[2]), img.dtype)
+        # padImage[:h, :w] = cv.resize(img[cropY:cropY + cropH, cropX:cropX + cropW], (w, h))
 
         tars: List = []
         for target in orgAnno:
             polygon = np.array(target['polygon'])
             if not self._isOutside(polygon, [cropX, cropY, cropX + cropW, cropY + cropH]):
-                newPolygon: List = ((polygon - (cropX, cropY)) * scale).tolist()
+                # newPolygon: List = ((polygon - (cropX, cropY)) * scale).tolist()
+                newPolygon: List = (polygon - (cropX, cropY)).tolist()
                 tars.append({**target, 'polygon': newPolygon})
         data['anno'] = tars
         data['img'] = padImage
