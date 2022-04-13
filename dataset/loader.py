@@ -94,11 +94,11 @@ class DetCollate:
             mh = max([mh, h])
             mw = max([mw, w])
         for element in batch:
-            imgs.append(padding(element['img'], (mh, mw)))
-            probMaps.append(padding(element['probMap'], (mh, mw)))
-            probMasks.append(padding(element['probMask'], (mh, mw)))
-            threshMaps.append(padding(element['threshMap'], (mh, mw)))
-            threshMasks.append(padding(element['threshMask'], (mh, mw)))
+            imgs.append(element['img'])
+            probMaps.append(element['probMap'])
+            probMasks.append(element['probMask'])
+            threshMaps.append(element['threshMap'])
+            threshMasks.append(element['threshMask'])
             if "polygon" in element:
                 polygons.append(element['polygon'])
             if "ignore" in element:
