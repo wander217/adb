@@ -93,6 +93,8 @@ valid:
     prep:
       DetAug:
         onlyResize: False
+        Fliplr:
+          p: 0.5
       DetForm:
         shrinkRatio: 0.4
       ProbMaker:
