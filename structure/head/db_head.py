@@ -1,6 +1,8 @@
 from torch import nn, Tensor
 from collections import OrderedDict
 import torch
+from typing import List
+import torch.nn.functional as F
 
 
 class DBHead(nn.Module):
@@ -33,11 +35,14 @@ class DBHead(nn.Module):
     def binarize(self, probMap: Tensor, threshMap: Tensor):
         return torch.reciprocal(1. + torch.exp(-self.k * (probMap - threshMap)))
 
-    def forward(self, x: Tensor) -> OrderedDict:
+    def resize(self, x: Tensor, shape: List):
+        return F.interpolate(x, shape, mode="bilinear", align_corners=True)
+
+    def forward(self, x: Tensor, shape: List) -> OrderedDict:
         result: OrderedDict = OrderedDict()
         # calculate probability map
-        probMap: Tensor = self.prob(x)
-        threshMap: Tensor = self.thresh(x)
+        probMap: Tensor = self.resize(self.prob(x), shape)
+        threshMap: Tensor = self.resize(self.thresh(x), shape)
         binaryMap: Tensor = self.binarize(probMap, threshMap)
         result.update(probMap=probMap,
                       binaryMap=binaryMap,
