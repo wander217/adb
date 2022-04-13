@@ -32,6 +32,7 @@ class DetNorm:
         image: np.ndarray = data['img']
         h, w, c = image.shape
         if h > self.limit or w > self.limit:
+            print(h, w, c)
             scale = min([self.limit / w, self.limit / h])
             new_h = math.floor(h * scale)
             new_w = math.floor(w * scale)
@@ -51,6 +52,7 @@ class DetNorm:
             data['probMask'] = cv2.resize(data['probMask'],
                                           (new_w, new_h),
                                           interpolation=cv2.INTER_CUBIC)
+            print(data['img'].shape)
         image = (image.astype(np.float64) - self.mean) / 255.
         data['img'] = np.transpose(image, (2, 0, 1))
         return data

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     print(valid.__len__())
 
     for i in range(0, valid.__len__()):
-        data: OrderedDict = valid.__getitem__(i, isVisual=True)
+        data: OrderedDict = valid.__getitem__(i, isVisual=False)
         print(i)
     #
     # train = DetLoader(**config['train']).build()

@@ -44,7 +44,7 @@ accurancy:
 
 train:
   batchSize: 8
-  numWorkers: 2
+  numWorkers: 1
   dropLast: True
   shuffle: True
   pinMemory: False
@@ -82,9 +82,9 @@ train:
 
 valid:
   batchSize: 1
-  numWorkers: 2
+  numWorkers: 1
   dropLast: True
-  shuffle: True
+  shuffle: False
   pinMemory: False
   dataset:
     imgType: 1
@@ -104,7 +104,7 @@ valid:
         maxThresh: 0.7
       DetNorm:
         mean: [ 122.67891434, 116.66876762, 104.00698793 ]
-        limit: 10000
+        limit: 1028
       DetFilter:
         key: [ 'polygon', 'shape', 'ignore', 'train' ]
 
