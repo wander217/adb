@@ -61,7 +61,7 @@ train:
           rotate: [ -10, 10 ]
           fit_output: True
         Resize:
-          size: [ 0.5, 1 ]
+          size: [ 0.5, 1. ]
       DetCrop:
         minCropSize: 0.1
         maxTries: 10
@@ -81,7 +81,7 @@ train:
         key: [ 'polygon', 'shape', 'ignore', 'train' ]
 
 valid:
-  batchSize: 8
+  batchSize: 1
   numWorkers: 2
   dropLast: True
   shuffle: True
@@ -104,7 +104,7 @@ valid:
         maxThresh: 0.7
       DetNorm:
         mean: [ 122.67891434, 116.66876762, 104.00698793 ]
-        limit: 1920
+        limit: 10000
       DetFilter:
         key: [ 'polygon', 'shape', 'ignore', 'train' ]
 
