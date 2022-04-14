@@ -28,6 +28,7 @@ class DBPredictor:
 
     def _resize(self, image: np.ndarray) -> Tuple:
         org_h, org_w, _ = image.shape
+        cv.imshow("img", cv.resize(image, (640, 640), interpolation=cv.INTER_CUBIC))
         # scale = self._limit / org_h
         # new_h = math.ceil(org_h / 32) * 32
         # scale = 0.705 if org_h > self._limit else scale
@@ -38,9 +39,8 @@ class DBPredictor:
         new_w = math.ceil(org_w / 32) * 32
         new_image = np.zeros((math.ceil(new_h / 32) * 32,
                               math.ceil(new_w / 32) * 32, 3), dtype=np.uint8)
-        image = cv.resize(image, (new_w, new_h), interpolation=cv.INTER_LINEAR)
-        new_image[:new_h, :new_w, :] = image
-        print(new_w, new_h)
+        # image = cv.resize(image, (new_w, new_h), interpolation=cv.INTER_LINEAR)
+        new_image[:org_h, :org_w, :] = image
         return new_image, new_h, new_w
 
     def _normalize(self, image: np.ndarray) -> np.ndarray:
@@ -68,12 +68,12 @@ class DBPredictor:
 
 
 if __name__ == "__main__":
-    configPath: str = r'D:\workspace\project\adb\config\adb_se_eb0.yaml'
-    pretrainedPath: str = r'pretrained/checkpoint_130.pth'
+    configPath: str = r'config\adb_se_eb0.yaml'
+    pretrainedPath: str = r'pretrained\checkpoint_130.pth'
     # configPath: str = r'config/dbpp_eb0.yaml'
     # pretrainedPath: str = r'pretrained/eb0/checkpoint_941.pth'
     # imgPath: str = r'C:\Users\thinhtq\Downloads\vietnamese_original\vietnamese\unseen_test_images\im1999.jpg'
-    imgPath: str = r'D:\workspace\project\db_pp\test_image\test1_1.png'
+    imgPath: str = r'D:\adb\test_image\test1_1.png'
     predictor = DBPredictor(configPath, pretrainedPath)
     img = cv.imread(imgPath)
     start = time.time()
