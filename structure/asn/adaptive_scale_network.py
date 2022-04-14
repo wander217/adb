@@ -104,10 +104,10 @@ class AdaptiveScaleNetwork(nn.Module):
     def forward(self, x: Tensor):
         y = resize(self._weight_init(x) * x, self._shape)
         y = self._conv(self._residual(y)) + resize(x, self._shape)
-        # tmp = y.permute(0, 2, 3, 1).cpu().detach().numpy()
-        # mean = [122.67891434, 116.66876762, 104.00698793]
-        # cv2.imshow("abc", np.uint8(tmp[0] * 255. + mean))
-        # cv2.waitKey(0)
+        tmp = y.permute(0, 2, 3, 1).cpu().detach().numpy()
+        mean = [122.67891434, 116.66876762, 104.00698793]
+        cv2.imshow("abc", np.uint8(tmp[0] * 255. + mean))
+        cv2.waitKey(0)
         return y
 
 
