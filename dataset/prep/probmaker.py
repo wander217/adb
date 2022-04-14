@@ -6,6 +6,14 @@ from typing import List, OrderedDict
 from collections import OrderedDict
 
 
+def _visual(data: OrderedDict):
+    print(data.keys())
+    probMap = np.uint8(data['probMap'][0] * 255)
+    probMask = np.uint8(data['probMask'] * 255)
+    cv.imshow("probMap", probMap)
+    cv.imshow("probMask", probMask)
+
+
 class ProbMaker:
     def __init__(self, minTextSize: int, shrinkRatio: float):
         self._minTextSize = minTextSize
@@ -14,15 +22,8 @@ class ProbMaker:
     def __call__(self, data: OrderedDict, isVisual: bool = False) -> OrderedDict:
         output: OrderedDict = self._build(data)
         if isVisual:
-            self._visual(output)
+            _visual(output)
         return output
-
-    def _visual(self, data: OrderedDict):
-        print(data.keys())
-        probMap = np.uint8(data['probMap'][0] * 255)
-        probMask = np.uint8(data['probMask'] * 255)
-        cv.imshow("probMap", probMap)
-        cv.imshow("probMask", probMask)
 
     def _build(self, data: OrderedDict) -> OrderedDict:
         img: np.ndarray = data['img']
@@ -63,14 +64,14 @@ class ProbMaker:
         return data
 
     def _valid(self, polygons: List, ignores: np.ndarray) -> tuple:
-        '''
+        """
             Input:
                 - polygons: Danh sách các polygon trong ảnh
                 - ignores : Danh sách quy định polygon bị ignore
             Ouput:
                 - polygons: Danh sách các polygon được chuẩn hóa
                 - ignores: Danh sách quy định polygon bị ignore
-        '''
+        """
         if len(polygons) == 0:
             return polygons, ignores
         assert len(ignores) == len(polygons)
