@@ -59,7 +59,9 @@ train:
           p: 0.5
         Affine:
           rotate: !!python/tuple [ -10, 10 ]
-          shear: !!python/tuple [ -5, 5 ]
+          shear:
+              x : !!python/tuple [ -5, 5 ]
+              y : !!python/tuple [ -5, 5 ]
           fit_output: True
         Resize:
           size: !!python/tuple [ 0.5, 3. ]
