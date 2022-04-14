@@ -13,10 +13,12 @@ class LossModel(nn.Module):
         self._loss: DBLoss = DBLoss(**loss)
         self._loss = self._loss.to(self._device)
 
-    def forward(self, batch: OrderedDict):
+    def forward(self, batch: OrderedDict, training: bool = True):
         for key, value in batch.items():
             if (value is not None) and hasattr(value, 'to'):
                 batch[key] = value.to(self._device)
         pred: OrderedDict = self._model(batch['img'], batch['shape'])
-        loss, metric = self._loss(pred, batch)
-        return pred, loss, metric
+        if training:
+            loss, metric = self._loss(pred, batch)
+            return pred, loss, metric
+        return pred
