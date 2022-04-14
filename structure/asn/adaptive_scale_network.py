@@ -103,7 +103,7 @@ class AdaptiveScaleNetwork(nn.Module):
 
     def forward(self, x: Tensor):
         y = resize(self._weight_init(x) * x, self._shape)
-        y = self._conv(self._residual(y)) + resize(x, self._shape)
+        y = self._conv(self._residual(y)) #+ resize(x, self._shape)
         return y
 
 
