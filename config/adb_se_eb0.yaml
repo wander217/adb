@@ -58,10 +58,11 @@ train:
         Fliplr:
           p: 0.5
         Affine:
-          rotate: [ -10, 10 ]
+          rotate: !!python/tuple [-10, 10]
+          shear: !!python/tuple [-5, 5]
           fit_output: True
         Resize:
-          size: [ 0.5, 3. ]
+          size: !!python/tuple [0.5, 3.]
       DetCrop:
         generalSize: [800, 800]
         minCropSize: 0.1

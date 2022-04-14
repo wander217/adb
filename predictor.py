@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # configPath: str = r'config/dbpp_eb0.yaml'
     # pretrainedPath: str = r'pretrained/eb0/checkpoint_941.pth'
     # imgPath: str = r'C:\Users\thinhtq\Downloads\vietnamese_original\vietnamese\unseen_test_images\im1999.jpg'
-    imgPath: str = r'C:\Users\thinhtq\Downloads\vietnamese_original\vietnamese\unseen_test_images\im1573.jpg'
+    imgPath: str = r'C:\Users\thinhtq\Downloads\vietnamese_original\vietnamese\unseen_test_images\im1620.jpg'
     predictor = DBPredictor(configPath, pretrainedPath)
     img = cv.imread(imgPath)
     start = time.time()
