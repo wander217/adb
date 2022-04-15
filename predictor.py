@@ -28,7 +28,6 @@ class DBPredictor:
 
     def _resize(self, image: np.ndarray) -> Tuple:
         org_h, org_w, _ = image.shape
-        cv.imshow("img", cv.resize(image, (640, 640), interpolation=cv.INTER_CUBIC))
         # scale = self._limit / org_h
         # new_h = math.ceil(org_h / 32) * 32
         # scale = 0.705 if org_h > self._limit else scale
@@ -39,8 +38,9 @@ class DBPredictor:
         new_w = math.ceil(org_w / 32) * 32
         new_image = np.zeros((math.ceil(new_h / 32) * 32,
                               math.ceil(new_w / 32) * 32, 3), dtype=np.uint8)
-        # image = cv.resize(image, (new_w, new_h), interpolation=cv.INTER_LINEAR)
-        new_image[:org_h, :org_w, :] = image
+        image = cv.resize(image, (new_w, new_h), interpolation=cv.INTER_LINEAR)
+        new_image[:new_h, :new_w, :] = image
+        print(new_w, new_h)
         return new_image, new_h, new_w
 
     def _normalize(self, image: np.ndarray) -> np.ndarray:
@@ -58,9 +58,7 @@ class DBPredictor:
             h, w, _ = image.shape
             reImage, newH, newW = self._resize(image)
             inputImage = self._normalize(reImage)
-            pred: OrderedDict = self._model(dict(img=inputImage,
-                                                 shape=[newH, newW]),
-                                            training=False)
+            pred: OrderedDict = self._model(dict(img=inputImage, shape=[newH, newW]))
             bs, ss = self._score(pred, dict(img=inputImage))
             for i in range(len(bs[0])):
                 if ss[0][i] > 0:
@@ -70,12 +68,12 @@ class DBPredictor:
 
 
 if __name__ == "__main__":
-    configPath: str = r'config\adb_se_eb0.yaml'
-    pretrainedPath: str = r'pretrained\checkpoint_302.pth'
+    configPath: str = r'D:\workspace\project\adb\config\adb_se_eb0.yaml'
+    pretrainedPath: str = r'pretrained/checkpoint_130.pth'
     # configPath: str = r'config/dbpp_eb0.yaml'
     # pretrainedPath: str = r'pretrained/eb0/checkpoint_941.pth'
     # imgPath: str = r'C:\Users\thinhtq\Downloads\vietnamese_original\vietnamese\unseen_test_images\im1999.jpg'
-    imgPath: str = r'C:\Users\thinhtq\Downloads\vietnamese_original\vietnamese\unseen_test_images\im1620.jpg'
+    imgPath: str = r'D:\workspace\project\db_pp\test_image\test1_1.png'
     predictor = DBPredictor(configPath, pretrainedPath)
     img = cv.imread(imgPath)
     start = time.time()
