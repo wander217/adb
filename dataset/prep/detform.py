@@ -18,8 +18,8 @@ class DetForm:
 
     def _build(self, data: Dict) -> OrderedDict:
         '''
-        :param data: a dict contain : anno, img, train, shape, tar
-        :return: a ordered idict contain: img, polygon, shape, ignore, train
+        :param data: a dict contain : anno, img, train, target
+        :return: a ordered idict contain: img, polygon, ignore, train
         '''
         polygon: List = []
         ignore: List = []
