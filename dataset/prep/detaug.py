@@ -59,9 +59,9 @@ class DetAug:
               Resize image when valid/test
         '''
         org_h, org_w, _ = image.shape
-        new_h = int(math.ceil(org_h / 32) * 32)
-        new_w = int(math.ceil(org_w / 32) * 32)
-        new_image = np.zeros((new_h, new_w, 3), dtype=np.uint8)
+        # new_h = int(math.ceil(org_h / 32) * 32)
+        # new_w = int(math.ceil(org_w / 32) * 32)
+        new_image = np.zeros((800, 800, 3), dtype=np.uint8)
         new_image[:org_h, :org_w, :] = image
         return new_image
 
