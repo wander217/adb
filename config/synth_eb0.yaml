@@ -30,7 +30,7 @@ lossModel:
       eps: !!float '1e-6'
 
 train:
-  batchSize: 8
+  batchSize: 16
   numWorkers: 2
   dropLast: True
   shuffle: True
