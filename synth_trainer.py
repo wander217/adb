@@ -52,19 +52,19 @@ class SynthTrainer:
         for i in range(self._startEpoch, self._totalEpoch):
             self._logger.reportDelimitter()
             self._logger.reportTime("Epoch {}".format(i))
-            trainRS: Dict = self._trainStep()
+            trainRS: Dict = self._trainStep(i)
             self._save(trainRS, i)
         self._logger.reportDelimitter()
         self._logger.reportTime("Finish")
         self._logger.reportDelimitter()
 
-    def _trainStep(self) -> Dict:
+    def _trainStep(self, epoch:int) -> Dict:
         self._model.train()
         totalLoss: DetAverager = DetAverager()
         probLoss: DetAverager = DetAverager()
         threshLoss: DetAverager = DetAverager()
         binaryLoss: DetAverager = DetAverager()
-        for batch in self._train:
+        for i, batch in enumerate(self._train):
             self._optim.zero_grad()
             batchSize: int = batch['img'].size(0)
             pred, loss, metric = self._model(batch)
@@ -75,6 +75,13 @@ class SynthTrainer:
             threshLoss.update(metric['threshLoss'].item() * batchSize, batchSize)
             binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
             probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
+            if i % 100 == 0:
+                self._logger.reportMetric("Epoch {} - Step {}".format(epoch, i), {
+                    'totalLoss': totalLoss.calc(),
+                    'threshLoss': threshLoss.calc(),
+                    'binaryLoss': binaryLoss.calc(),
+                    'probLoss': probLoss.calc()
+                })
         return {
             'totalLoss': totalLoss.calc(),
             'threshLoss': threshLoss.calc(),
