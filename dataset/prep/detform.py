@@ -23,7 +23,7 @@ class DetForm:
         '''
         polygon: List = []
         ignore: List = []
-        anno: np.ndarray = data['anno']
+        anno: np.ndarray = data['target']
         img: np.ndarray = data['img']
         train: bool = data['train']
 

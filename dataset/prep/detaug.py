@@ -33,7 +33,7 @@ class DetAug:
 
     def _visual(self, data: Dict, lineHeight: int = 2):
         img = data['img']
-        tars = data['anno']
+        tars = data['target']
         for tar in tars:
             cv.polylines(img,
                          [np.int32(tar['polygon']).reshape((1, -1, 2))],
@@ -73,7 +73,7 @@ class DetAug:
             return data
 
         tars: List = []
-        for tar in data['tar']:
+        for tar in data['target']:
             if self._onlyResize:
                 newPolygon: List = [(point[0], point[1]) for point in tar['polygon']]
             else:
@@ -87,5 +87,5 @@ class DetAug:
                 'polygon': newPolygon,
                 'ignore': tar['label'] == '###'
             })
-        data['anno'] = tars
+        data['target'] = tars
         return data

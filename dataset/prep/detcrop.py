@@ -18,7 +18,7 @@ class DetCrop:
 
     def _visual(self, data: Dict):
         img = data['img']
-        tars = data['anno']
+        tars = data['target']
         for tar in tars:
             cv.polylines(img,
                          [np.int32(tar['polygon']).reshape((-1, 1, 2))],
@@ -29,7 +29,7 @@ class DetCrop:
 
     def _build(self, data: Dict) -> Dict:
         img: np.ndarray = data['img']
-        orgAnno: List = data['anno']
+        orgAnno: List = data['target']
         polygon_list: List = [tar['polygon'] for tar in orgAnno if not tar['ignore']]
         cropX, cropY, cropW, cropH = self._cropArea(img, polygon_list)
         scaleW: float = self._generalSize[0] / cropW
@@ -50,7 +50,7 @@ class DetCrop:
             if not self._isOutside(polygon, [cropX, cropY, cropX + cropW, cropY + cropH]):
                 newPolygon: List = ((polygon - (cropX, cropY)) * scale).tolist()
                 tars.append({**target, 'polygon': newPolygon})
-        data['anno'] = tars
+        data['target'] = tars
         data['img'] = padImage
         return data
 
