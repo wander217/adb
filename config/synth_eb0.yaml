@@ -42,6 +42,8 @@ train:
     prep:
       DetAug:
         onlyResize: True
+        Resize:
+          size: [ 0.5, 3. ]
       DetForm:
         shrinkRatio: 0.4
       ProbMaker:
