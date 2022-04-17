@@ -21,10 +21,10 @@ def sampling(dp: str, fp: str, bp: str, limit: int, save_path: str):
         width, height = images[bg_index].size
         start = [random.randint(0, width // 2), random.randint(0, height // 2)]
         ls = []
-        for _ in range(2):
-            tmp = lines[random.randint(0, len(lines) - 1)].strip("\n").strip("\r\t")
-            if len(tmp) != 0:
-                ls.append(tmp)
+        tmp = lines[random.randint(0, len(lines) // 4 * 3)].strip("\n").strip("\r\t")
+        ls.append(tmp)
+        tmp = lines[random.randint(len(lines) // 4 * 3, len(lines) - 1)].strip("\n").strip("\r\t")
+        ls.append(tmp)
         line_space = [random.randint(0, 50), random.randint(0, 100)]
         word_space = []
         font_paths = []
