@@ -163,7 +163,7 @@ class SynthTextDataset(Dataset):
         image, target = generator(**self._dct[index],
                                   bg_root=self._bg_root,
                                   font_root=self._font_root)
-        data.update(img=image, target=target, train=True)
+        data.update(img=image, tar=target, train=True)
         for proc in self._prep:
             data = proc(data, isVisual)
         if len(self._prep) != 0 and isVisual:
