@@ -43,7 +43,7 @@ train:
       DetAug:
         onlyResize: True
         Resize:
-          size: [ 0.5, 3. ]
+          size: [ 1., 1. ]
       DetForm:
         shrinkRatio: 0.4
       ProbMaker:
