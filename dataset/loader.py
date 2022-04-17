@@ -194,7 +194,8 @@ class SynthCollate:
             probMap=torch.from_numpy(np.asarray(probMaps, dtype=np.float64)).float(),
             probMask=torch.from_numpy(np.asarray(probMasks, dtype=np.int16)),
             threshMap=torch.from_numpy(np.asarray(threshMaps, dtype=np.float64)).float(),
-            threshMask=torch.from_numpy(np.asarray(threshMasks, dtype=np.int16))
+            threshMask=torch.from_numpy(np.asarray(threshMasks, dtype=np.int16)),
+            shape=imgs[0].shape[:2]
         )
         return output
 
