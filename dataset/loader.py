@@ -202,26 +202,26 @@ class SynthCollate:
 class SynthLoader:
     def __init__(self,
                  dataset: Dict,
-                 num_workers: int,
-                 batch_size: int,
-                 drop_last: bool,
+                 numWorkers: int,
+                 batchSize: int,
+                 dropLast: bool,
                  shuffle: bool,
-                 pin_memory: bool):
-        self._data_holder: SynthTextDataset = SynthTextDataset(**dataset)
-        self._num_workers: int = num_workers
-        self._batch_size: int = batch_size
-        self._drop_last: bool = drop_last
+                 pinMemory: bool):
+        self._dataHolder: SynthTextDataset = SynthTextDataset(**dataset)
+        self._numWorkers: int = numWorkers
+        self._batchSize: int = batchSize
+        self._dropLast: bool = dropLast
         self._shuffle: bool = shuffle
-        self._pin_memory: bool = pin_memory
+        self._pinMemory: bool = pinMemory
         self._collate = SynthCollate()
 
     def build(self):
         return DataLoader(
-            dataset=self._data_holder,
-            batch_size=self._batch_size,
-            num_workers=self._num_workers,
-            drop_last=self._drop_last,
+            dataset=self._dataHolder,
+            batch_size=self._batchSize,
+            num_workers=self._numWorkers,
+            drop_last=self._dropLast,
             shuffle=self._shuffle,
-            pin_memory=self._pin_memory,
+            pin_memory=self._pinMemory,
             collate_fn=self._collate
         )
