@@ -13,101 +13,30 @@ def resize(x: Tensor, org_size: List):
     return F.interpolate(x, org_size, mode='bilinear', align_corners=True)
 
 
-class ConvNormActivation(nn.Module):
-    def __init__(self,
-                 input_channel: int,
-                 output_channel: int,
-                 activation: nn.Module = None,
-                 kernel_size: int = 3,
-                 padding: int = 1,
-                 stride: int = 1,
-                 bias: bool = False):
-        super().__init__()
-        self._conv: nn.Module = nn.Sequential(
-            nn.Conv2d(
-                in_channels=input_channel,
-                out_channels=output_channel,
-                kernel_size=kernel_size,
-                padding=padding,
-                stride=stride,
-                bias=bias),
-            nn.BatchNorm2d(output_channel))
-        self._act: nn.Module = activation
-
-    def forward(self, x: Tensor):
-        y: Tensor = self._conv(x)
-        if self._act is not None:
-            y = self._act(y)
-        return y
-
-
-class ResidualConv(nn.Module):
-    def __init__(self,
-                 input_channel: int,
-                 hidden_channel: int,
-                 kernel_size: int = 3,
-                 padding: int = 1,
-                 stride: int = 1):
-        super().__init__()
-        self._conv: nn.Module = nn.Sequential(
-            nn.Conv2d(in_channels=input_channel,
-                      out_channels=hidden_channel,
-                      kernel_size=kernel_size,
-                      stride=stride,
-                      padding=padding,
-                      bias=False),
-            nn.BatchNorm2d(hidden_channel),
-            nn.LeakyReLU(inplace=True),
-            nn.Conv2d(in_channels=hidden_channel,
-                      out_channels=input_channel,
-                      kernel_size=kernel_size,
-                      padding=padding,
-                      stride=stride,
-                      bias=False),
-            nn.BatchNorm2d(input_channel))
-
-    def forward(self, x: Tensor):
-        y: Tensor = self._conv(x) + x
-        return y
-
-
-def weight_int(module):
-    if isinstance(module, nn.Conv2d):
-        nn.init.kaiming_normal_(module.weight.data)
-    elif isinstance(module, nn.BatchNorm2d):
-        module.weight.data.fill_(1.)
-        module.bias.data.fill_(1e-4)
-
-
 class AdaptiveScaleNetwork(nn.Module):
     def __init__(self, shape: List):
         super().__init__()
         self._shape: List = shape
-        self._lower: Tensor = (self._shape[0] - 1) * (self._shape[1] - 1)
         self._weight_init: nn.Module = nn.Sequential(
-            ConvNormActivation(input_channel=3,
-                               output_channel=16,
-                               activation=nn.LeakyReLU(inplace=True)),
-            ConvNormActivation(input_channel=16,
-                               output_channel=1,
-                               activation=nn.Hardsigmoid(inplace=True)))
+            nn.Conv2d(3, 32, 3, 1, 1, bias=False),
+            nn.LeakyReLU(inplace=True),
+            nn.Conv2d(32, 32, 1, 1, 0, bias=False),
+            nn.LeakyReLU(inplace=True),
+            nn.BatchNorm2d(32)
+        )
         self._residual: nn.Module = nn.Sequential(
-            ConvNormActivation(input_channel=3,
-                               output_channel=16,
-                               activation=nn.LeakyReLU(inplace=True)),
-            ResidualConv(input_channel=16, hidden_channel=16),
-            ResidualConv(input_channel=16, hidden_channel=16),
-            ResidualConv(input_channel=16, hidden_channel=16),
-            ConvNormActivation(input_channel=16, output_channel=16))
-        self._conv: nn.Module = ConvNormActivation(input_channel=16, output_channel=3)
+            nn.Conv2d(32, 32, 3, 1, 1, bias=False),
+            nn.LeakyReLU(inplace=True),
+            nn.BatchNorm2d(32),
+            nn.Conv2d(32, 32, 3, 1, 1, bias=False),
+            nn.BatchNorm2d(32)
+        )
+        self._conv: nn.Module = nn.Conv2d(32, 3, 3, 1, 1, bias=False)
 
     def forward(self, x: Tensor):
-        y = resize(self._weight_init(x) * x, self._shape)
-        y = self._conv(self._residual(y)) + resize(x, self._shape)
-        # tmp = y.permute(0, 2, 3, 1).cpu().detach().numpy()
-        # mean = [122.67891434, 116.66876762, 104.00698793]
-        # cv2.imshow("abc", np.uint8(tmp[0] * 255. + mean))
-        # cv2.waitKey(0)
+        y: Tensor = resize(self._weight_init(x), self._shape)
+        y = self._residual(y) + y
+        y = self._conv(y) + resize(x, self._shape)
         return y
 
 

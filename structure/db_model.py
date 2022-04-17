@@ -50,7 +50,7 @@ class DBModel(nn.Module):
 
 # test
 if __name__ == "__main__":
-    file_config: str = r'D:\adb\config\adb_eb0.yaml'
+    file_config: str = r'D:\workspace\project\adb\config\adb_eb0.yaml'
     with open(file_config) as stream:
         data = yaml.safe_load(stream)
     model = DBModel(**data['lossModel']['model'])
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     train_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print('total params:', total_params)
     print('train params:', train_params)
-    a = torch.rand((8, 3, 960, 960), dtype=torch.float)
+    a = torch.rand((1, 3, 960, 960), dtype=torch.float)
     start = time.time()
     b = model(a, (960, 960))
     print('run:', time.time() - start)

@@ -1,5 +1,3 @@
-import math
-
 import torch
 from torch.utils.data import DataLoader, Dataset
 from typing import Dict, List, Tuple
@@ -9,6 +7,7 @@ import os
 import json
 import numpy as np
 import cv2 as cv
+from dataset.text_generator import generator
 
 
 class DetDataset(Dataset):
@@ -142,5 +141,87 @@ class DetLoader:
             drop_last=self._dropLast,
             shuffle=self._shuffle,
             pin_memory=self._pinMemory,
+            collate_fn=self._collate
+        )
+
+
+class SynthTextDataset(Dataset):
+    def __init__(self, dct_root: str, bg_root: str, font_root: str, prep: Dict):
+        with open(dct_root, 'r', encoding='utf-8') as f:
+            self._dct: list = json.loads(f.readline())
+        self._bg_root: str = bg_root
+        self._font_root: str = font_root
+        self._prep: List = []
+        # loading prep module
+        if prep is not None:
+            for key, item in prep.items():
+                cls = getattr(prep_module, key)
+                self._prep.append(cls(**item))
+
+    def __getitem__(self, index: int, isVisual: bool = False):
+        data = OrderedDict()
+        image, target = generator(**self._dct[index],
+                                  bg_root=self._bg_root,
+                                  font_root=self._font_root)
+        data.update(img=image, target=target, train=True)
+        for proc in self._prep:
+            data = proc(data, isVisual)
+        if len(self._prep) != 0 and isVisual:
+            cv.waitKey(0)
+        return data
+
+    def __len__(self):
+        return len(self._dct)
+
+
+class SynthCollate:
+
+    def __call__(self, batch: Tuple) -> OrderedDict:
+        imgs: List = []
+        probMaps: List = []
+        probMasks: List = []
+        threshMaps: List = []
+        threshMasks: List = []
+        output: OrderedDict = OrderedDict()
+        for element in batch:
+            imgs.append(element['img'])
+            probMaps.append(element['probMap'])
+            probMasks.append(element['probMask'])
+            threshMaps.append(element['threshMap'])
+            threshMasks.append(element['threshMask'])
+        output.update(
+            img=torch.from_numpy(np.asarray(imgs, dtype=np.float64)).float(),
+            probMap=torch.from_numpy(np.asarray(probMaps, dtype=np.float64)).float(),
+            probMask=torch.from_numpy(np.asarray(probMasks, dtype=np.int16)),
+            threshMap=torch.from_numpy(np.asarray(threshMaps, dtype=np.float64)).float(),
+            threshMask=torch.from_numpy(np.asarray(threshMasks, dtype=np.int16))
+        )
+        return output
+
+
+class SynthLoader:
+    def __init__(self,
+                 dataset: Dict,
+                 num_workers: int,
+                 batch_size: int,
+                 drop_last: bool,
+                 shuffle: bool,
+                 pin_memory: bool):
+        self._data_holder: SynthTextDataset = SynthTextDataset(**dataset)
+        self._num_workers: int = num_workers
+        self._batch_size: int = batch_size
+        self._drop_last: bool = drop_last
+        self._shuffle: bool = shuffle
+        self._pin_memory: bool = pin_memory
+        self._collate = SynthCollate()
+
+    def build(self):
+        return DataLoader(
+            dataset=self._data_holder,
+            batch_size=self._batch_size,
+            num_workers=self._num_workers,
+            drop_last=self._drop_last,
+            shuffle=self._shuffle,
+            pin_memory=self._pin_memory,
             collate_fn=self._collate
         )

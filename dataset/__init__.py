@@ -1,2 +1,2 @@
-from dataset.loader import DetLoader
+from dataset.loader import DetLoader, SynthLoader
 

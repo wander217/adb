@@ -1,0 +1,71 @@
+totalEpoch: 5
+startEpoch: 1
+lr: 0.001
+
+lossModel:
+  model:
+    asn:
+      shape: [ 640, 640 ]
+    backbone:
+      netID: 'b0'
+      depthProb: 0.2
+      useSE: False
+    neck:
+      dataPoint: [ 24, 40, 112, 1280 ]
+      exp: 256
+    head:
+      k: 50
+      exp: 256
+
+  loss:
+    threshScale: 10
+    threshLoss:
+      eps: !!float '1e-6'
+    probScale: 5
+    probLoss:
+      ratio: 3.
+      eps: !!float '1e-6'
+    binaryScale: 1
+    binaryLoss:
+      eps: !!float '1e-6'
+
+train:
+  batchSize: 8
+  numWorkers: 2
+  dropLast: True
+  shuffle: True
+  pinMemory: False
+  dataset:
+    dct_root: ''
+    bg_root: ''
+    font_root: ''
+    prep:
+      DetAug:
+        onlyResize: True
+      DetForm:
+        shrinkRatio: 0.4
+      ProbMaker:
+        shrinkRatio: 0.4
+        minTextSize: 8
+      ThreshMaker:
+        expandRatio: 0.4
+        minThresh: 0.3
+        maxThresh: 0.7
+      DetNorm:
+        mean: [ 122.67891434, 116.66876762, 104.00698793 ]
+      DetFilter:
+        key: [ 'polygon', 'ignore', 'train' ]
+
+optimizer:
+  name: Adam
+  args:
+    betas: [ 0.9, 0.999 ]
+    eps: !!float '1e-8'
+
+checkpoint:
+  workspace: './checkpoint'
+  resume: ''
+
+logger:
+  workspace: './logger'
+  level: INFO
