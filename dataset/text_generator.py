@@ -13,7 +13,7 @@ def draw_word(bg: Image,
     bbox = []
     last = [bg.size[0], 0]
     for i, word in enumerate(words):
-        x1, y1 = start if len(bbox) == 0 else np.array(bbox[len(bbox) - 1]['polygon'][1]) + space
+        x1, y1 = start if len(bbox) == 0 else np.array(bbox[len(bbox) - 1]['polygon'][3]) + space
         x1, y1 = int(x1), int(y1)
         word_size = font.getsize(text=word)
         new_image = Image.new("RGBA", word_size, (0, 0, 0, 0))
