@@ -35,7 +35,7 @@ def sampling(dp: str, fp: str, bp: str, limit: int, save_path: str):
             font_paths.append(fonts[random.randint(0, len(fonts) - 1)])
             fs = random.randint(5, 40) * 2
             font_sizes.append(fs)
-            word_space.append([fs * 0.5, fs * random.randint(-1, 1) * 0.5])
+            word_space.append([fs * 0.5, fs * random.randint(0, 10) // 10])
             tmp = l.split(" ")
             color = []
             angle = []
