@@ -52,13 +52,12 @@ class SynthTrainer:
         for i in range(self._startEpoch, self._totalEpoch):
             self._logger.reportDelimitter()
             self._logger.reportTime("Epoch {}".format(i))
-            trainRS: Dict = self._trainStep(i)
-            self._save(trainRS, i)
+            self._trainStep(i)
         self._logger.reportDelimitter()
         self._logger.reportTime("Finish")
         self._logger.reportDelimitter()
 
-    def _trainStep(self, epoch:int) -> Dict:
+    def _trainStep(self, epoch: int):
         self._model.train()
         totalLoss: DetAverager = DetAverager()
         probLoss: DetAverager = DetAverager()
@@ -75,19 +74,13 @@ class SynthTrainer:
             threshLoss.update(metric['threshLoss'].item() * batchSize, batchSize)
             binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
             probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
-            if i % 100 == 0:
-                self._logger.reportMetric("Epoch {} - Step {}".format(epoch, i), {
+            if i % 1000 == 0:
+                self._save({
                     'totalLoss': totalLoss.calc(),
                     'threshLoss': threshLoss.calc(),
                     'binaryLoss': binaryLoss.calc(),
                     'probLoss': probLoss.calc()
-                })
-        return {
-            'totalLoss': totalLoss.calc(),
-            'threshLoss': threshLoss.calc(),
-            'binaryLoss': binaryLoss.calc(),
-            'probLoss': probLoss.calc()
-        }
+                }, epoch)
 
     def _save(self, trainRS: Dict, epoch: int):
         self._logger.reportMetric("training", trainRS)
