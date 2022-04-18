@@ -19,7 +19,7 @@ def sampling(dp: str, fp: str, bp: str, limit: int, save_path: str):
     for _ in tqdm(range(limit)):
         bg_index = random.randint(0, len(bgs) - 1)
         width, height = images[bg_index].size
-        start = [random.randint(0, width // 4), random.randint(0, height // 4)]
+        start = [random.randint(0, width // 4 * 3), random.randint(0, height // 4)]
         ls = [lines[random.randint(0, len(lines) - 1)].strip("\n").strip("\r\t") for _ in range(random.randint(3, 5))]
         line_space = [random.randint(0, 20), random.randint(0, 20)]
         word_space = []
