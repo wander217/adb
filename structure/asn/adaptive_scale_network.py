@@ -37,6 +37,11 @@ class AdaptiveScaleNetwork(nn.Module):
         y: Tensor = resize(self._weight_init(x), self._shape)
         y = self._residual(y) + y
         y = self._conv(y) + resize(x, self._shape)
+        # tmp = y.cpu().detach().numpy()[0]
+        # tmp = np.transpose(tmp, (1, 2, 0))
+        # tmp = np.uint8(tmp*255)
+        # cv2.imshow("abc", tmp)
+        # cv2.waitKey(0)
         return y
 
 

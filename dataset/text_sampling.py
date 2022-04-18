@@ -19,13 +19,9 @@ def sampling(dp: str, fp: str, bp: str, limit: int, save_path: str):
     for _ in tqdm(range(limit)):
         bg_index = random.randint(0, len(bgs) - 1)
         width, height = images[bg_index].size
-        start = [random.randint(0, width // 2), random.randint(0, height // 2)]
-        ls = []
-        tmp = lines[random.randint(0, len(lines) // 4 * 3)].strip("\n").strip("\r\t")
-        ls.append(tmp)
-        tmp = lines[random.randint(len(lines) // 4 * 3, len(lines) - 1)].strip("\n").strip("\r\t")
-        ls.append(tmp)
-        line_space = [random.randint(0, 50), random.randint(0, 100)]
+        start = [random.randint(0, width // 4), random.randint(0, height // 4)]
+        ls = [lines[random.randint(0, len(lines) - 1)].strip("\n").strip("\r\t") for _ in range(random.randint(3, 5))]
+        line_space = [random.randint(0, 20), random.randint(0, 20)]
         word_space = []
         font_paths = []
         font_sizes = []
@@ -33,7 +29,7 @@ def sampling(dp: str, fp: str, bp: str, limit: int, save_path: str):
         angles = []
         for l in ls:
             font_paths.append(fonts[random.randint(0, len(fonts) - 1)])
-            fs = random.randint(5, 40) * 2
+            fs = random.randint(10, 50) * 2
             font_sizes.append(fs)
             word_space.append([fs * 0.5, fs * random.randint(0, 10) // 10])
             tmp = l.split(" ")

@@ -3,9 +3,9 @@ import random
 import cv2
 from dataset.text_generator import generator
 
-bg_root = r'D:\workspace\project\adb\asset\bg'
-font_root = r'D:\workspace\project\adb\asset\font'
-path: str = r'D:\workspace\project\adb\asset\train.txt'
+bg_root = r'D:\adb\asset\bg'
+font_root = r'D:\adb\asset\font'
+path: str = r'D:\adb\asset\train.txt'
 with open(path, 'r', encoding='utf-8') as f:
     data = json.loads(f.readline())
 index = random.randint(0, len(data) - 1)
