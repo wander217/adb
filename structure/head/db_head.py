@@ -23,8 +23,9 @@ class DBHead(nn.Module):
         )
 
         self.thresh: nn.Module = nn.Sequential(
-            nn.Conv2d(exp, 1, kernel_size=1),
+            nn.Conv2d(exp, 1, kernel_size=3, padding=1),
             nn.BatchNorm2d(1),
+            nn.ReLU(inplace=True),
             nn.AdaptiveAvgPool2d(1),
             nn.Sigmoid()
         )
