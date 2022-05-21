@@ -19,7 +19,7 @@ class DBLoss(nn.Module):
         lossDict: OrderedDict = OrderedDict(probLoss=probDist)
         binaryDist: Tensor = self._binaryLoss(pred['binaryMap'],
                                               batch['binaryMap'],
-                                              batch['probMask'])
+                                              batch['probMap'][0])
         lossDict.update(binaryLoss=binaryDist)
         loss = probDist + binaryDist / 2
         return loss, lossDict
