@@ -5,10 +5,9 @@ import torch.nn.functional as F
 
 
 class DBHead(nn.Module):
-    def __init__(self, k: int, exp: int, km: int):
+    def __init__(self, exp: int, thresh: int):
         super().__init__()
-        self.k: int = k
-        self.km: int = km
+        self.thresh: int = thresh
 
         exp_output: int = exp // 4
         self.prob: nn.Module = nn.Sequential(
@@ -29,5 +28,7 @@ class DBHead(nn.Module):
         result: OrderedDict = OrderedDict()
         # calculate probability map
         probMap: Tensor = self.resize(self.prob(x), shape)
-        result.update(probMap=probMap)
+        binaryMap: Tensor = probMap > self.thresh
+        binaryMap = F.max_pool2d(binaryMap.float(), 9, 1, 4)
+        result.update(probMap=probMap, binaryMap=binaryMap)
         return result

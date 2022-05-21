@@ -75,7 +75,6 @@ class DetTrainer:
         self._model.train()
         totalLoss: DetAverager = DetAverager()
         probLoss: DetAverager = DetAverager()
-        threshLoss: DetAverager = DetAverager()
         binaryLoss: DetAverager = DetAverager()
         for i, batch in enumerate(self._train):
             self._optim.zero_grad()
@@ -85,21 +84,18 @@ class DetTrainer:
             loss.backward()
             self._optim.step()
             totalLoss.update(loss.item() * batchSize, batchSize)
-            # threshLoss.update(metric['threshLoss'].item() * batchSize, batchSize)
-            # binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
-            # probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
+            binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
+            probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
             if i % 100 == 0 and i > 0:
                 self._logger.reportMetric("- Step {}".format(i), {
                     'totalLoss': totalLoss.calc(),
-                    # 'threshLoss': threshLoss.calc(),
-                    # 'binaryLoss': binaryLoss.calc(),
-                    # 'probLoss': probLoss.calc(),
+                    'binaryLoss': binaryLoss.calc(),
+                    'probLoss': probLoss.calc(),
                 })
         return {
             'totalLoss': totalLoss.calc(),
-            # 'threshLoss': threshLoss.calc(),
-            # 'binaryLoss': binaryLoss.calc(),
-            # 'probLoss': probLoss.calc(),
+            'binaryLoss': binaryLoss.calc(),
+            'probLoss': probLoss.calc(),
             'lr': self._curLR
         }
 
@@ -107,21 +103,18 @@ class DetTrainer:
         self._model.eval()
         totalLoss: DetAverager = DetAverager()
         probLoss: DetAverager = DetAverager()
-        threshLoss: DetAverager = DetAverager()
         binaryLoss: DetAverager = DetAverager()
         for batch in self._valid:
             with torch.no_grad():
                 batchSize: int = batch['img'].size(0)
                 pred, loss, metric = self._model(batch)
                 totalLoss.update(loss.mean().item() * batchSize, batchSize)
-                threshLoss.update(metric['threshLoss'].item() * batchSize, batchSize)
                 binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
                 probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
             return {
                 'totalLoss': totalLoss.calc(),
-                # 'threshLoss': threshLoss.calc(),
-                # 'binaryLoss': binaryLoss.calc(),
-                # 'probLoss': probLoss.calc()
+                'binaryLoss': binaryLoss.calc(),
+                'probLoss': probLoss.calc()
             }
 
     def _save(self, trainRS: Dict, validRS: Dict, epoch: int):

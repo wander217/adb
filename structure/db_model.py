@@ -68,6 +68,6 @@ if __name__ == "__main__":
     start = time.time()
     b = model(x.float(), (1024, 1024))
     print('run:', time.time() - start)
-    b = b['probMap'].squeeze().cpu().detach().numpy()
+    b = b['binaryMap'].squeeze().cpu().detach().numpy()
     cv2.imshow("abc", np.uint8(255*b))
     cv2.waitKey(0)
