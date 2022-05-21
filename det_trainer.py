@@ -21,7 +21,6 @@ class DetTrainer:
                  totalEpoch: int,
                  startEpoch: int,
                  lr: float,
-                 factor: float,
                  **kwargs):
         self._device = torch.device('cpu')
         if torch.cuda.is_available():
@@ -33,7 +32,6 @@ class DetTrainer:
         self._logger: DetLogger = DetLogger(**logger)
         optimCls = getattr(optim, optimizer['name'])
         self._lr: float = lr
-        self._factor: float = factor
         self._optim: optim.Optimizer = optimCls(**optimizer['args'],
                                                 lr=self._lr,
                                                 params=self._model.parameters())
@@ -47,12 +45,6 @@ class DetTrainer:
             self._model.load_state_dict(stateDict[0])
             self._optim.load_state_dict(stateDict[1])
             self._startEpoch = stateDict[2] + 1
-
-    def _updateLR(self, epoch: int):
-        rate: float = (1. - epoch / self._totalEpoch) ** self._factor
-        self._curLR: float = rate * self._lr
-        for groups in self._optim.param_groups:
-            groups['lr'] = self._curLR
 
     def train(self):
         self._load()
