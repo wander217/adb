@@ -63,7 +63,6 @@ class DetTrainer:
         for i in range(self._startEpoch, self._totalEpoch):
             self._logger.reportDelimitter()
             self._logger.reportTime("Epoch {}".format(i))
-            self._updateLR(epoch=i)
             trainRS: Dict = self._trainStep()
             validRS: Dict = self._validStep()
             self._save(trainRS, validRS, i)
