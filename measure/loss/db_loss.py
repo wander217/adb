@@ -7,15 +7,15 @@ from torch import Tensor
 
 
 class DBLoss(nn.Module):
-    def __init__(self, probLoss: Dict,  binaryLoss: Dict):
+    def __init__(self, probLoss: Dict, binaryLoss: Dict):
         super().__init__()
         self._probLoss: BceLoss = BceLoss(**probLoss)
         self._binaryLoss = DiceLoss(**binaryLoss)
 
     def __call__(self, pred: OrderedDict, batch: OrderedDict) -> Tuple:
         probDist: Tensor = self._probLoss(pred['probMap'],
-                                            batch['probMap'],
-                                            batch['probMask'])
+                                          batch['probMap'],
+                                          batch['probMask'])
         lossDict: OrderedDict = OrderedDict(probLoss=probDist)
         binaryDist: Tensor = self._binaryLoss(pred['binaryMap'],
                                               batch['binaryMap'],
