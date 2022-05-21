@@ -1,6 +1,7 @@
-totalEpoch: 1200
+totalEpoch: 1000
 startEpoch: 1
-lr: 0.001
+lr: 0.007
+factor: 0.9
 
 lossModel:
   model:
@@ -98,10 +99,10 @@ valid:
         key: [ 'polygon', 'ignore', 'train' ]
 
 optimizer:
-  name: Adam
+  name: SGD
   args:
-    betas: [ 0.9, 0.999 ]
-    eps: !!float '1e-8'
+    momentum: 0.9
+    weight_decay: 0.0001
 
 checkpoint:
   workspace: './checkpoint'
