@@ -39,6 +39,5 @@ class DBHead(nn.Module):
         probMap: Tensor = self.resize(self.prob(x), shape)
         thresh: Tensor = self.thresh(x)
         binaryMap: Tensor = self.binarization(probMap, thresh)
-        binaryMap = F.max_pool2d(binaryMap.float(), 9, 1, 4)
         result.update(probMap=probMap, binaryMap=binaryMap)
         return result
