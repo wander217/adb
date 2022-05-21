@@ -6,7 +6,7 @@ factor: 0.9
 lossModel:
   model:
     asn:
-      shape: [ 640, 640 ]
+      shape: [ 320, 320 ]
       hidden_channel: 32
     backbone:
       netID: 'b0'
