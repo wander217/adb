@@ -67,7 +67,7 @@ train:
               y : [ -10, 10 ]
           fit_output: True
         Resize:
-          size: [ 0.7, 1. ]
+          size: [ 0.8, 1. ]
       DetForm:
         shrinkRatio: 0.4
       ProbMaker:
