@@ -26,9 +26,9 @@ class DBLoss(nn.Module):
         self._binaryLoss = DiceLoss(**binaryLoss)
 
     def __call__(self, pred: OrderedDict, batch: OrderedDict) -> Tuple:
-        probDist: Tensor = self._probLoss(pred['probMap'],
-                                          batch['probMap'],
-                                          batch['probMask'])
+        probDist: Tensor = self._binaryLoss(pred['probMap'],
+                                            batch['probMap'],
+                                            batch['probMask'])
         loss: Tensor = probDist
         lossDict: OrderedDict = OrderedDict(probLoss=probDist)
         if 'threshMap' in pred:
