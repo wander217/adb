@@ -27,7 +27,8 @@ class DBHead(nn.Module):
             nn.BatchNorm2d(1),
             nn.ReLU(inplace=True),
             nn.AdaptiveAvgPool2d(1),
-            nn.Sigmoid())
+            nn.Sigmoid()
+        )
 
     def resize(self, x: Tensor, shape: List):
         return F.interpolate(x, shape, mode="bilinear", align_corners=True)
