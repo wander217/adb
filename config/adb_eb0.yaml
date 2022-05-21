@@ -1,6 +1,7 @@
 totalEpoch: 1000
 startEpoch: 1
 lr: 0.001
+factor: 0.9
 
 lossModel:
   model:
