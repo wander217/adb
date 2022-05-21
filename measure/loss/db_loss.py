@@ -10,7 +10,7 @@ class DBLoss(nn.Module):
     def __init__(self, probLoss: Dict, binaryLoss: Dict):
         super().__init__()
         self._probLoss: BceLoss = BceLoss(**probLoss)
-        self._binaryLoss = DiceLoss(**binaryLoss)
+        self._binaryLoss = BceLoss(**binaryLoss)
 
     def __call__(self, pred: OrderedDict, batch: OrderedDict) -> Tuple:
         probDist: Tensor = self._probLoss(pred['probMap'],
