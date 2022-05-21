@@ -53,21 +53,20 @@ train:
   pinMemory: False
   dataset:
     imgType: 0
-    imgDir: 'D:\dataset\vintext\train/image'
-    tarFile: 'D:\dataset\vintext\train/target.json'
+    imgDir: 'D:\TextOCR\splited\train/image'
+    tarFile: 'D:\TextOCR\splited\train/target.json'
     prep:
       DetAug:
         onlyResize: False
         Fliplr:
           p: 0.5
         Affine:
-          rotate: [ -10, 10 ]
+          rotate: [ -5, 5 ]
           shear:
               x : [ -5, 5 ]
               y : [ -5, 5 ]
-          fit_output: True
         Resize:
-          size: [ 0.5, 1. ]
+          size: [ 0.7, 1. ]
       DetForm:
         shrinkRatio: 0.4
       ProbMaker:
@@ -94,9 +93,7 @@ valid:
     tarFile: 'target.json'
     prep:
       DetAug:
-        onlyResize: False
-        Fliplr:
-          p: 0.5
+        onlyResize: True
       DetForm:
         shrinkRatio: 0.4
       ProbMaker:

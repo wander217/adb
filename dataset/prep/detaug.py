@@ -59,8 +59,6 @@ class DetAug:
               Resize image when valid/test
         '''
         org_h, org_w, _ = image.shape
-        # new_h = int(math.ceil(org_h / 32) * 32)
-        # new_w = int(math.ceil(org_w / 32) * 32)
         new_image = np.zeros((1024, 1024, 3), dtype=np.uint8)
         new_image[:org_h, :org_w, :] = image
         return new_image
@@ -75,13 +73,16 @@ class DetAug:
         tars: List = []
         for tar in data['target']:
             if self._onlyResize:
-                newPolygon: List = [(point[0], point[1]) for point in tar['bbox']]
+                newPolygon: List = [(point[0], point[1])
+                                    for point in tar['bbox']]
             else:
-                keyPoints: List = [Keypoint(point[0], point[1]) for point in tar['bbox']]
+                keyPoints: List = [Keypoint(point[0], point[1])
+                                   for point in tar['bbox']]
                 keyPoints = aug.augment_keypoints([
                     KeypointsOnImage(keyPoints, shape=shape)
                 ])[0].keypoints
-                newPolygon: List = [(keyPoint.x, keyPoint.y) for keyPoint in keyPoints]
+                newPolygon: List = [(keyPoint.x, keyPoint.y)
+                                    for keyPoint in keyPoints]
             tars.append({
                 'label': tar['text'],
                 'polygon': newPolygon,

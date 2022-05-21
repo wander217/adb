@@ -5,7 +5,7 @@ from dataset.loader import DetDataset
 import yaml
 
 if __name__ == "__main__":
-    configPath = r'D:\adb\config\adb_eb0.yaml'
+    configPath = r'D:\workspace\project\adb\config\adb_eb0.yaml'
 
     with open(configPath, encoding='utf-8') as f:
         config = yaml.safe_load(f)

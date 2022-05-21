@@ -1,3 +1,5 @@
+import random
+
 import torch
 from torch.utils.data import DataLoader, Dataset
 from typing import Dict, List, Tuple
@@ -52,13 +54,16 @@ class DetDataset(Dataset):
         imgPath: str = self._imgPath[index]
         image: np.ndarray = self._loadImage(imgPath)
         data['train'] = self._train
-        data['tar'] = self._target[index]
+        data['target'] = self._target[index]
         data['img'] = image
-        for proc in self._prep:
-            data = proc(data, isVisual)
-        if len(self._prep) != 0 and isVisual:
-            cv.waitKey(0)
-        return data
+        try:
+            for proc in self._prep:
+                data = proc(data, isVisual)
+            if len(self._prep) != 0 and isVisual:
+                cv.waitKey(0)
+            return data
+        except Exception as e:
+            return self.__getitem__(random.randint(0, self.__len__()), isVisual)
 
     def __len__(self):
         return len(self._imgPath)
@@ -87,11 +92,6 @@ class DetCollate:
         polygons: List = []
         ignores: List = []
         output: OrderedDict = OrderedDict()
-        mh, mw = 0, 0
-        for element in batch:
-            c, h, w = element['img'].shape
-            mh = max([mh, h])
-            mw = max([mw, w])
         for element in batch:
             imgs.append(element['img'])
             probMaps.append(element['probMap'])
@@ -108,7 +108,7 @@ class DetCollate:
             probMask=torch.from_numpy(np.asarray(probMasks, dtype=np.int16)),
             threshMap=torch.from_numpy(np.asarray(threshMaps, dtype=np.float64)).float(),
             threshMask=torch.from_numpy(np.asarray(threshMasks, dtype=np.int16)),
-            shape=[mh, mw]
+            shape=[1024, 1024]
         )
         if len(polygons) != 0:
             output.update(polygon=torch.from_numpy(np.asarray(polygons, dtype=np.int32)))
