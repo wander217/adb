@@ -85,21 +85,21 @@ class DetTrainer:
             loss.backward()
             self._optim.step()
             totalLoss.update(loss.item() * batchSize, batchSize)
-            threshLoss.update(metric['threshLoss'].item() * batchSize, batchSize)
-            binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
-            probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
+            # threshLoss.update(metric['threshLoss'].item() * batchSize, batchSize)
+            # binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
+            # probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
             if i % 100 == 0 and i > 0:
                 self._logger.reportMetric("- Step {}".format(i), {
                     'totalLoss': totalLoss.calc(),
-                    'threshLoss': threshLoss.calc(),
-                    'binaryLoss': binaryLoss.calc(),
-                    'probLoss': probLoss.calc(),
+                    # 'threshLoss': threshLoss.calc(),
+                    # 'binaryLoss': binaryLoss.calc(),
+                    # 'probLoss': probLoss.calc(),
                 })
         return {
             'totalLoss': totalLoss.calc(),
-            'threshLoss': threshLoss.calc(),
-            'binaryLoss': binaryLoss.calc(),
-            'probLoss': probLoss.calc(),
+            # 'threshLoss': threshLoss.calc(),
+            # 'binaryLoss': binaryLoss.calc(),
+            # 'probLoss': probLoss.calc(),
             'lr': self._curLR
         }
 
@@ -119,9 +119,9 @@ class DetTrainer:
                 probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
             return {
                 'totalLoss': totalLoss.calc(),
-                'threshLoss': threshLoss.calc(),
-                'binaryLoss': binaryLoss.calc(),
-                'probLoss': probLoss.calc()
+                # 'threshLoss': threshLoss.calc(),
+                # 'binaryLoss': binaryLoss.calc(),
+                # 'probLoss': probLoss.calc()
             }
 
     def _save(self, trainRS: Dict, validRS: Dict, epoch: int):

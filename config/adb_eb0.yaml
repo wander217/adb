@@ -67,16 +67,16 @@ train:
               y : [ -10, 10 ]
           fit_output: True
         Resize:
-          size: [ 0.8, 1. ]
+          size: [ 0.7, 1. ]
       DetForm:
         shrinkRatio: 0.4
       ProbMaker:
         shrinkRatio: 0.4
         minTextSize: 8
-      ThreshMaker:
-        expandRatio: 0.4
-        minThresh: 0.3
-        maxThresh: 0.7
+#      ThreshMaker:
+#        expandRatio: 0.4
+#        minThresh: 0.3
+#        maxThresh: 0.7
       DetNorm:
         mean: [ 122.67891434, 116.66876762, 104.00698793 ]
       DetFilter:
