@@ -73,8 +73,8 @@ train:
         key: [ 'polygon', 'ignore', 'train' ]
 
 valid:
-  batchSize: 8
-  numWorkers: 0
+  batchSize: 4
+  numWorkers: 2
   dropLast: True
   shuffle: True
   pinMemory: False
