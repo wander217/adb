@@ -23,9 +23,10 @@ class DBHead(nn.Module):
         )
 
         self.thresh: nn.Module = nn.Sequential(
-            nn.Conv2d(exp, exp_output, kernel_size=3, padding=1),
+            nn.Conv2d(exp, 1, kernel_size=3, padding=1),
+            nn.BatchNorm2d(1),
             nn.ReLU(inplace=True),
-            nn.AdaptiveMaxPool2d(1)
+            nn.AdaptiveAvgPool2d(1)
         )
 
     def resize(self, x: Tensor, shape: List):
