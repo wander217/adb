@@ -22,7 +22,12 @@ class DBHead(nn.Module):
             nn.Sigmoid()
         )
 
-        self.thresh: nn.Module = nn.AdaptiveAvgPool2d(1)
+        self.thresh: nn.Module = nn.Sequential(
+            nn.Conv2d(exp, exp_output, kernel_size=3, padding=1),
+            nn.BatchNorm2d(exp_output),
+            nn.ReLU(inplace=True),
+            nn.AdaptiveMaxPool2d(1)
+        )
 
     def resize(self, x: Tensor, shape: List):
         return F.interpolate(x, shape, mode="bilinear", align_corners=True)
