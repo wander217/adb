@@ -26,7 +26,8 @@ class DBHead(nn.Module):
             nn.Conv2d(exp, 1, kernel_size=3, padding=1),
             nn.BatchNorm2d(1),
             nn.ReLU(inplace=True),
-            nn.AdaptiveAvgPool2d(1)
+            nn.AdaptiveAvgPool2d(1),
+            nn.Sigmoid()
         )
 
     def resize(self, x: Tensor, shape: List):
