@@ -10,7 +10,7 @@ lossModel:
       hidden_channel: 32
     backbone:
       netID: 'b0'
-      depthProb: 0.3
+      depthProb: 0.2
       useSE: True
     neck:
       data_point: [ 24, 40, 112, 1280 ]
