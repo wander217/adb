@@ -77,7 +77,7 @@ class DetTrainer:
         probLoss: DetAverager = DetAverager()
         threshLoss: DetAverager = DetAverager()
         binaryLoss: DetAverager = DetAverager()
-        for batch in self._train:
+        for i, batch in enumerate(self._train):
             self._optim.zero_grad()
             batchSize: int = batch['img'].size(0)
             pred, loss, metric = self._model(batch)
@@ -88,6 +88,13 @@ class DetTrainer:
             threshLoss.update(metric['threshLoss'].item() * batchSize, batchSize)
             binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
             probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
+            if i % 1000 == 0 and i > 0:
+                self._logger.reportMetric("- Step {}".format(i), {
+                    'totalLoss': totalLoss.calc(),
+                    'threshLoss': threshLoss.calc(),
+                    'binaryLoss': binaryLoss.calc(),
+                    'probLoss': probLoss.calc(),
+                })
         return {
             'totalLoss': totalLoss.calc(),
             'threshLoss': threshLoss.calc(),
@@ -118,8 +125,8 @@ class DetTrainer:
             }
 
     def _save(self, trainRS: Dict, validRS: Dict, epoch: int):
-        self._logger.reportMetric("training", trainRS)
-        self._logger.reportMetric("validation", validRS)
+        self._logger.reportMetric(" - Training", trainRS)
+        self._logger.reportMetric(" - Validation", validRS)
         self._logger.writeFile({
             'training': trainRS,
             'validation': validRS
