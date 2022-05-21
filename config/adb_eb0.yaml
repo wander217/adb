@@ -80,11 +80,13 @@ valid:
   pinMemory: False
   dataset:
     imgType: 0
-    imgDir: 'valid/image'
-    tarFile: 'target.json'
+    imgDir: 'D:\TextOCR\splited\valid/image'
+    tarFile: 'D:\TextOCR\splited\valid/target.json'
     prep:
       DetAug:
         onlyResize: True
+        Resize:
+          size: [ 0.7, 1. ]
       DetForm:
         shrinkRatio: 0.4
       ProbMaker:

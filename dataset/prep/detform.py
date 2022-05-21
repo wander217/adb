@@ -26,7 +26,6 @@ class DetForm:
         anno: np.ndarray = data['target']
         img: np.ndarray = data['img']
         train: bool = data['train']
-
         for tar in anno:
             polygon.append(np.array(tar['polygon']))
             ignore.append(tar['ignore'])
