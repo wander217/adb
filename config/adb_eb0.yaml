@@ -90,10 +90,6 @@ valid:
       ProbMaker:
         shrinkRatio: 0.4
         minTextSize: 8
-#      ThreshMaker:
-#        expandRatio: 0.4
-#        minThresh: 0.3
-#        maxThresh: 0.7
       DetNorm:
         mean: [ 122.67891434, 116.66876762, 104.00698793 ]
       DetFilter:
