@@ -1,5 +1,4 @@
 from collections import OrderedDict
-
 import cv2
 import numpy as np
 from torch import nn, Tensor
@@ -68,4 +67,7 @@ if __name__ == "__main__":
     x = torch.from_numpy(image).permute(2, 0, 1).unsqueeze(0)
     start = time.time()
     b = model(x.float(), (1024, 1024))
+    b = b['binaryMap'].squeeze().cpu().detach().numpy()
+    cv2.imshow("abc", np.uint8(255*b))
+    cv2.waitKey(0)
     print('run:', time.time() - start)
