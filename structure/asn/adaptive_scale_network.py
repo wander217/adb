@@ -14,34 +14,33 @@ def resize(x: Tensor, org_size: List):
 
 
 class AdaptiveScaleNetwork(nn.Module):
-    def __init__(self, shape: List):
+    def __init__(self, shape: List, hidden_channel:int):
         super().__init__()
         self._shape: List = shape
         self._weight_init: nn.Module = nn.Sequential(
-            nn.Conv2d(3, 32, 3, 1, 1, bias=False),
+            nn.Conv2d(3, hidden_channel, 3, 1, 1),
             nn.LeakyReLU(inplace=True),
-            nn.Conv2d(32, 32, 1, 1, 0, bias=False),
+            nn.Conv2d(32, hidden_channel, 1, 1, 0),
             nn.LeakyReLU(inplace=True),
-            nn.BatchNorm2d(32)
+            nn.BatchNorm2d(hidden_channel)
         )
         self._residual: nn.Module = nn.Sequential(
-            nn.Conv2d(32, 32, 3, 1, 1, bias=False),
+            nn.Conv2d(32, hidden_channel, 3, 1, 1),
             nn.LeakyReLU(inplace=True),
-            nn.BatchNorm2d(32),
-            nn.Conv2d(32, 32, 3, 1, 1, bias=False),
-            nn.BatchNorm2d(32)
-        )
-        self._conv: nn.Module = nn.Conv2d(32, 3, 3, 1, 1, bias=False)
+            nn.BatchNorm2d(hidden_channel),
+            nn.Conv2d(32, 32, 3, 1, 1),
+            nn.BatchNorm2d(hidden_channel))
+        self._conv: nn.Module = nn.Conv2d(hidden_channel, 3, 3, 1, 1)
 
     def forward(self, x: Tensor):
         y: Tensor = resize(self._weight_init(x), self._shape)
         y = self._residual(y) + y
         y = self._conv(y) + resize(x, self._shape)
-        # tmp = y.cpu().detach().numpy()[0]
-        # tmp = np.transpose(tmp, (1, 2, 0))
-        # tmp = np.uint8(tmp*255)
-        # cv2.imshow("abc", tmp)
-        # cv2.waitKey(0)
+        tmp = y.cpu().detach().numpy()[0]
+        tmp = np.transpose(tmp, (1, 2, 0))
+        tmp = np.uint8(tmp*255)
+        cv2.imshow("abc", tmp)
+        cv2.waitKey(0)
         return y
 
 

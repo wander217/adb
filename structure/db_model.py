@@ -1,4 +1,7 @@
 from collections import OrderedDict
+
+import cv2
+import numpy as np
 from torch import nn, Tensor
 from structure.backbone import DBEfficientNet
 from structure.neck import DBNeck
@@ -58,7 +61,11 @@ if __name__ == "__main__":
     train_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print('total params:', total_params)
     print('train params:', train_params)
-    a = torch.rand((1, 3, 960, 960), dtype=torch.float)
+    image = cv2.imread(r"D:\TextOCR\train_val_images\train_images\0000e8b36676338b.jpg")
+    h, w, c = image.shape
+    new_image = np.zeros((1024, 1024, 3))
+    new_image[:h, :w] = image
+    x = torch.from_numpy(image).permute(2, 0, 1).unsqueeze(0)
     start = time.time()
-    b = model(a, (960, 960))
+    b = model(x.float(), (1024, 1024))
     print('run:', time.time() - start)

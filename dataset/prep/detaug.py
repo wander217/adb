@@ -48,7 +48,7 @@ class DetAug:
 
         if self._prep is not None:
             aug = self._prep.to_deterministic()
-            data['img'] = self._resize(image) if self._onlyResize else aug.augment_image(image)
+            data['img'] = self._resize(image if self._onlyResize else aug.augment_image(image))
             self._makeAnnotation(aug, data, shape)
         # saving shape to recover
         data.update(orgShape=shape[:2])
@@ -61,7 +61,7 @@ class DetAug:
         org_h, org_w, _ = image.shape
         # new_h = int(math.ceil(org_h / 32) * 32)
         # new_w = int(math.ceil(org_w / 32) * 32)
-        new_image = np.zeros((800, 800, 3), dtype=np.uint8)
+        new_image = np.zeros((1024, 1024, 3), dtype=np.uint8)
         new_image[:org_h, :org_w, :] = image
         return new_image
 
