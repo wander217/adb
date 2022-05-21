@@ -63,7 +63,7 @@ class DetDataset(Dataset):
                 cv.waitKey(0)
             return data
         except Exception as e:
-            return self.__getitem__(random.randint(0, self.__len__()), isVisual)
+            return self.__getitem__(random.randint(0, self.__len__() - 1), isVisual)
 
     def __len__(self):
         return len(self._imgPath)

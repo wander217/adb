@@ -88,7 +88,7 @@ class DetTrainer:
             threshLoss.update(metric['threshLoss'].item() * batchSize, batchSize)
             binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
             probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
-            if i % 1000 == 0 and i > 0:
+            if i % 100 == 0 and i > 0:
                 self._logger.reportMetric("- Step {}".format(i), {
                     'totalLoss': totalLoss.calc(),
                     'threshLoss': threshLoss.calc(),
