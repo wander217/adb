@@ -18,6 +18,7 @@ lossModel:
       exp: 256
     head:
       k: 50
+      km: 9
       exp: 256
 
   loss:

@@ -6,29 +6,30 @@ import torch.nn.functional as F
 
 
 class DBHead(nn.Module):
-    def __init__(self, k: int, exp: int, bias: bool = False):
+    def __init__(self, k: int, exp: int, km: int):
         super().__init__()
         self.k: int = k
+        self.km: int = km
 
         exp_output: int = exp // 4
         self.prob: nn.Module = nn.Sequential(
-            nn.Conv2d(exp, exp_output, kernel_size=3, padding=1, bias=bias),
+            nn.Conv2d(exp, exp_output, kernel_size=3, padding=1),
             nn.BatchNorm2d(exp_output),
             nn.ReLU(inplace=True),
-            nn.ConvTranspose2d(exp_output, exp_output, kernel_size=2, stride=2, bias=bias),
+            nn.ConvTranspose2d(exp_output, exp_output, kernel_size=2, stride=2),
             nn.BatchNorm2d(exp_output),
             nn.ReLU(inplace=True),
-            nn.ConvTranspose2d(exp_output, 1, kernel_size=2, stride=2, bias=bias),
+            nn.ConvTranspose2d(exp_output, 1, kernel_size=2, stride=2),
             nn.Sigmoid()
         )
         self.thresh: nn.Module = nn.Sequential(
-            nn.Conv2d(exp, exp_output, kernel_size=3, padding=1, bias=bias),
+            nn.Conv2d(exp, exp_output, kernel_size=3, padding=1),
             nn.BatchNorm2d(exp_output),
             nn.ReLU(inplace=True),
-            nn.ConvTranspose2d(exp_output, exp_output, kernel_size=2, stride=2, bias=bias),
+            nn.ConvTranspose2d(exp_output, exp_output, kernel_size=2, stride=2),
             nn.BatchNorm2d(exp_output),
             nn.ReLU(inplace=True),
-            nn.ConvTranspose2d(exp_output, 1, kernel_size=2, stride=2, bias=bias),
+            nn.ConvTranspose2d(exp_output, 1, kernel_size=2, stride=2),
             nn.Sigmoid()
         )
 
@@ -44,7 +45,7 @@ class DBHead(nn.Module):
         probMap: Tensor = self.resize(self.prob(x), shape)
         threshMap: Tensor = self.resize(self.thresh(x), shape)
         binaryMap: Tensor = self.binarize(probMap, threshMap)
-        binaryMap = F.max_pool2d(binaryMap, 9, 1, 9 // 2)
+        binaryMap = F.max_pool2d(binaryMap, self.km, 1, self.km // 2)
         result.update(probMap=probMap,
                       binaryMap=binaryMap,
                       threshMap=threshMap)
