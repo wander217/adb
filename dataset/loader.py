@@ -87,8 +87,7 @@ class DetCollate:
         imgs: List = []
         probMaps: List = []
         probMasks: List = []
-        threshMaps: List = []
-        threshMasks: List = []
+        binaryMaps: List = []
         polygons: List = []
         ignores: List = []
         output: OrderedDict = OrderedDict()
@@ -96,8 +95,7 @@ class DetCollate:
             imgs.append(element['img'])
             probMaps.append(element['probMap'])
             probMasks.append(element['probMask'])
-            # threshMaps.append(element['threshMap'])
-            # threshMasks.append(element['threshMask'])
+            binaryMaps.append(element['binaryMap'])
             if "polygon" in element:
                 polygons.append(element['polygon'])
             if "ignore" in element:
@@ -105,9 +103,8 @@ class DetCollate:
         output.update(
             img=torch.from_numpy(np.asarray(imgs, dtype=np.float64)).float(),
             probMap=torch.from_numpy(np.asarray(probMaps, dtype=np.float64)).float(),
+            binaryMap=torch.from_numpy(np.asarray(binaryMaps, dtype=np.float64)).float(),
             probMask=torch.from_numpy(np.asarray(probMasks, dtype=np.int16)),
-            # threshMap=torch.from_numpy(np.asarray(threshMaps, dtype=np.float64)).float(),
-            # threshMask=torch.from_numpy(np.asarray(threshMasks, dtype=np.int16)),
             shape=[1024, 1024]
         )
         if len(polygons) != 0:

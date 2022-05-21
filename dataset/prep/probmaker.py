@@ -35,6 +35,7 @@ class ProbMaker:
         if data['train']:
             polygons, ignores = self._valid(polygons, ignores)
         probMap: np.ndarray = np.zeros((1, h, w), dtype=np.float64)
+        binaryMap: np.ndarray = np.zeros((1, h, w), dtype=np.float64)
         probMask: np.ndarray = np.ones((h, w), dtype=np.float64)
 
         for i in range(len(polygons)):
@@ -59,8 +60,9 @@ class ProbMaker:
                     ignores[i] = True
                     continue
                 shrinkPolygon = np.array(shrinkPolygon[0]).reshape((-1, 2))
-                cv.fillPoly(probMap[0], [shrinkPolygon.astype(np.int32)], 1)
-        data.update(probMap=probMap, probMask=probMask)
+                cv.fillPoly(binaryMap[0], [shrinkPolygon.astype(np.int32)], 1)
+                cv.fillPoly(probMap[0], [polygon.astype(np.int32)], 1)
+        data.update(binaryMap=binaryMap, probMask=probMask, probMap=probMap)
         return data
 
     def _valid(self, polygons: List, ignores: np.ndarray) -> tuple:
