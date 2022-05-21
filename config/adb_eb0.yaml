@@ -1,7 +1,6 @@
 totalEpoch: 1200
 startEpoch: 1
-lr: 0.003
-factor: 0.9
+lr: 0.001
 
 lossModel:
   model:
@@ -75,12 +74,12 @@ train:
 
 valid:
   batchSize: 8
-  numWorkers: 2
+  numWorkers: 0
   dropLast: True
   shuffle: True
   pinMemory: False
   dataset:
-    imgType: 1
+    imgType: 0
     imgDir: 'valid/image'
     tarFile: 'target.json'
     prep:

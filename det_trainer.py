@@ -63,7 +63,6 @@ class DetTrainer:
         for i in range(self._startEpoch, self._totalEpoch):
             self._logger.reportDelimitter()
             self._logger.reportTime("Epoch {}".format(i))
-            self._updateLR(i)
             trainRS: Dict = self._trainStep()
             validRS: Dict = self._validStep()
             self._save(trainRS, validRS, i)
@@ -104,18 +103,18 @@ class DetTrainer:
         totalLoss: DetAverager = DetAverager()
         probLoss: DetAverager = DetAverager()
         binaryLoss: DetAverager = DetAverager()
-        for batch in self._valid:
-            with torch.no_grad():
-                batchSize: int = batch['img'].size(0)
-                pred, loss, metric = self._model(batch)
-                totalLoss.update(loss.mean().item() * batchSize, batchSize)
-                binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
-                probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
-            return {
-                'totalLoss': totalLoss.calc(),
-                'binaryLoss': binaryLoss.calc(),
-                'probLoss': probLoss.calc()
-            }
+        with torch.no_grad():
+            for batch in self._valid:
+                    batchSize: int = batch['img'].size(0)
+                    pred, loss, metric = self._model(batch)
+                    totalLoss.update(loss.mean().item() * batchSize, batchSize)
+                    binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
+                    probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
+        return {
+            'totalLoss': totalLoss.calc(),
+            'binaryLoss': binaryLoss.calc(),
+            'probLoss': probLoss.calc()
+        }
 
     def _save(self, trainRS: Dict, validRS: Dict, epoch: int):
         self._logger.reportMetric(" - Training", trainRS)
