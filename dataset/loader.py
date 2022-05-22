@@ -85,7 +85,7 @@ class DetCollate:
 
     def __call__(self, batch: Tuple) -> OrderedDict:
         imgs: List = []
-        probMaps: List = []
+        # probMaps: List = []
         probMasks: List = []
         binaryMaps: List = []
         polygons: List = []
@@ -93,7 +93,7 @@ class DetCollate:
         output: OrderedDict = OrderedDict()
         for element in batch:
             imgs.append(element['img'])
-            probMaps.append(element['probMap'])
+            # probMaps.append(element['probMap'])
             probMasks.append(element['probMask'])
             binaryMaps.append(element['binaryMap'])
             if "polygon" in element:
@@ -102,7 +102,7 @@ class DetCollate:
                 ignores.append(element['ignore'])
         output.update(
             img=torch.from_numpy(np.asarray(imgs, dtype=np.float64)).float(),
-            probMap=torch.from_numpy(np.asarray(probMaps, dtype=np.float64)).float(),
+            # probMap=torch.from_numpy(np.asarray(probMaps, dtype=np.float64)).float(),
             binaryMap=torch.from_numpy(np.asarray(binaryMaps, dtype=np.float64)).float(),
             probMask=torch.from_numpy(np.asarray(probMasks, dtype=np.int16)),
             shape=[1024, 1024]

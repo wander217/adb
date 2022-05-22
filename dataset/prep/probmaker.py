@@ -34,7 +34,7 @@ class ProbMaker:
         h, w = img.shape[:2]
         if data['train']:
             polygons, ignores = self._valid(polygons, ignores)
-        probMap: np.ndarray = np.zeros((1, h, w), dtype=np.float64)
+        # probMap: np.ndarray = np.zeros((1, h, w), dtype=np.float64)
         binaryMap: np.ndarray = np.zeros((1, h, w), dtype=np.float64)
         probMask: np.ndarray = np.ones((h, w), dtype=np.float64)
 
@@ -61,8 +61,8 @@ class ProbMaker:
                     continue
                 shrinkPolygon = np.array(shrinkPolygon[0]).reshape((-1, 2))
                 cv.fillPoly(binaryMap[0], [shrinkPolygon.astype(np.int32)], 1)
-                cv.fillPoly(probMap[0], [polygon.astype(np.int32)], 1)
-        data.update(binaryMap=binaryMap, probMask=probMask, probMap=probMap)
+                # cv.fillPoly(probMap[0], [polygon.astype(np.int32)], 1)
+        data.update(binaryMap=binaryMap, probMask=probMask)
         return data
 
     def _valid(self, polygons: List, ignores: np.ndarray) -> tuple:
