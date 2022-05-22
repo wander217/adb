@@ -19,7 +19,19 @@ class DBHead(nn.Module):
             nn.BatchNorm2d(exp_output),
             nn.ReLU(inplace=True),
             nn.ConvTranspose2d(exp_output, 1, kernel_size=2, stride=2),
-            nn.Hardsigmoid(inplace=True)
+            nn.Sigmoid()
+        )
+
+        self.thresh: nn.Module = nn.Sequential(
+            nn.Conv2d(exp, exp_output, kernel_size=3, padding=1),
+            nn.BatchNorm2d(exp_output),
+            nn.ReLU(inplace=True),
+            nn.ConvTranspose2d(exp_output, exp_output, kernel_size=2, stride=2),
+            nn.BatchNorm2d(exp_output),
+            nn.ReLU(inplace=True),
+            nn.ConvTranspose2d(exp_output, 1, kernel_size=2, stride=2),
+            nn.AdaptiveAvgPool2d(1),
+            nn.Sigmoid()
         )
 
     def resize(self, x: Tensor, shape: List):
