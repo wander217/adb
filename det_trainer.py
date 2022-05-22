@@ -85,12 +85,10 @@ class DetTrainer:
             # binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
             # probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
             self._step += 1
-            if self._step % 100 == 0:
+            if self._step % 300 == 0:
                 validRS = self._validStep()
                 self._model.train()
-                self._save({
-                    'totalLoss': totalLoss.calc()
-                }, validRS)
+                self._save({'totalLoss': totalLoss.calc()}, validRS)
 
     def _validStep(self) -> Dict:
         self._model.eval()
