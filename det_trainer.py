@@ -89,6 +89,7 @@ class DetTrainer:
                 validRS = self._validStep()
                 self._model.train()
                 self._save({'totalLoss': totalLoss.calc()}, validRS)
+                totalLoss.reset()
 
     def _validStep(self) -> Dict:
         self._model.eval()
