@@ -21,8 +21,6 @@ lossModel:
       exp: 256
 
   loss:
-    probLoss:
-      eps: !!float '1e-6'
     binaryLoss:
       ratio: 3.
       eps: !!float '1e-6'
