@@ -95,9 +95,7 @@ class DetTrainer:
                 batchSize: int = batch['img'].size(0)
                 pred, loss, metric = self._model(batch)
                 totalLoss.update(loss.mean().item() * batchSize, batchSize)
-        return {
-            'totalLoss': totalLoss.calc()
-        }
+        return {'totalLoss': totalLoss.calc()}
 
     def _save(self, trainRS: Dict, validRS: Dict):
         self._logger.reportMetric(" - Training", trainRS)
