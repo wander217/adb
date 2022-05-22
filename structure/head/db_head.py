@@ -22,25 +22,17 @@ class DBHead(nn.Module):
             nn.Hardsigmoid(inplace=True)
         )
 
-        self.thresh: nn.Module = nn.Sequential(
-            nn.Conv2d(exp, 1, kernel_size=1),
-            nn.BatchNorm2d(1),
-            nn.AdaptiveAvgPool2d(1),
-            nn.Hardsigmoid(inplace=True)
-        )
-
     def resize(self, x: Tensor, shape: List):
         return F.interpolate(x, shape, mode="bilinear", align_corners=True)
 
-    def binarization(self, probMap: Tensor, thresh: Tensor):
-        return torch.reciprocal(1. + torch.exp(-50 * (probMap - thresh)))
+    def binarization(self, probMap: Tensor):
+        return torch.reciprocal(1. + torch.exp(-50 * (probMap - self.thresh)))
 
     def forward(self, x: Tensor, shape: List) -> OrderedDict:
         result: OrderedDict = OrderedDict()
         # calculate probability map
         probMap: Tensor = self.resize(self.prob(x), shape)
-        thresh: Tensor = self.thresh(x)
-        binaryMap: Tensor = self.binarization(probMap, thresh)
+        binaryMap: Tensor = self.binarization(probMap)
         binaryMap = F.max_pool2d(binaryMap.float(), 9, 1, 4)
         result.update(probMap=probMap, binaryMap=binaryMap)
         return result
