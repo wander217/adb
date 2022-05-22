@@ -40,6 +40,7 @@ class DetTrainer:
         self._totalEpoch: int = totalEpoch + 1
         self._startEpoch: int = startEpoch
         self._curLR: float = lr
+        self._step = 0
 
     def _updateLR(self, epoch: int):
         rate: float = (1. - epoch / self._totalEpoch) ** self._factor
@@ -63,14 +64,12 @@ class DetTrainer:
         for i in range(self._startEpoch, self._totalEpoch):
             self._logger.reportDelimitter()
             self._logger.reportTime("Epoch {}".format(i))
-            trainRS: Dict = self._trainStep()
-            validRS: Dict = self._validStep()
-            self._save(trainRS, validRS, i)
+            self._trainStep()
         self._logger.reportDelimitter()
         self._logger.reportTime("Finish")
         self._logger.reportDelimitter()
 
-    def _trainStep(self) -> Dict:
+    def _trainStep(self):
         self._model.train()
         totalLoss: DetAverager = DetAverager()
         # probLoss: DetAverager = DetAverager()
@@ -85,18 +84,13 @@ class DetTrainer:
             totalLoss.update(loss.item() * batchSize, batchSize)
             # binaryLoss.update(metric['binaryLoss'].item() * batchSize, batchSize)
             # probLoss.update(metric['probLoss'].item() * batchSize, batchSize)
-            if i % 100 == 0 and i > 0:
-                self._logger.reportMetric("- Step {}".format(i), {
-                    'totalLoss': totalLoss.calc(),
-                    # 'binaryLoss': binaryLoss.calc(),
-                    # 'probLoss': probLoss.calc(),
-                })
-        return {
-            'totalLoss': totalLoss.calc(),
-            'binaryLoss': binaryLoss.calc(),
-            # 'probLoss': probLoss.calc(),
-            'lr': self._curLR
-        }
+            self._step += 1
+            if self._step % 100 == 0:
+                validRS = self._validStep()
+                self._model.train()
+                self._save({
+                    'totalLoss': totalLoss.calc()
+                }, validRS)
 
     def _validStep(self) -> Dict:
         self._model.eval()
@@ -116,15 +110,15 @@ class DetTrainer:
             # 'probLoss': probLoss.calc()
         }
 
-    def _save(self, trainRS: Dict, validRS: Dict, epoch: int):
+    def _save(self, trainRS: Dict, validRS: Dict):
         self._logger.reportMetric(" - Training", trainRS)
         self._logger.reportMetric(" - Validation", validRS)
         self._logger.writeFile({
             'training': trainRS,
             'validation': validRS
         })
-        self._checkpoint.saveCheckpoint(epoch, self._model, self._optim)
-        self._checkpoint.saveModel(self._model, epoch)
+        self._checkpoint.saveCheckpoint(self._step, self._model, self._optim)
+        self._checkpoint.saveModel(self._model, self._step)
 
 
 if __name__ == "__main__":
