@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 
 def resize(x: Tensor, org_size: List):
-    return F.interpolate(x, org_size, mode='bilinear', align_corners=True)
+    return F.interpolate(x, org_size, mode='bilinear', align_corners=False)
 
 
 class AdaptiveScaleNetwork(nn.Module):

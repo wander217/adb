@@ -35,7 +35,7 @@ class DBHead(nn.Module):
         )
 
     def resize(self, x: Tensor, shape: List):
-        return F.interpolate(x, shape, mode="bilinear", align_corners=True)
+        return F.interpolate(x, shape, mode="bilinear", align_corners=False)
 
     def binarization(self, probMap: Tensor, thresh: Tensor):
         return torch.reciprocal(1. + torch.exp(-50 * (probMap - thresh)))
