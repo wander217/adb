@@ -21,5 +21,5 @@ class DBLoss(nn.Module):
                                               batch['binaryMap'],
                                               batch['probMask'])
         lossDict.update(binaryLoss=binaryDist)
-        loss = probDist + binaryDist / 2
+        loss = probDist + binaryDist
         return loss, lossDict
